@@ -28,8 +28,6 @@
 
         <title>{{ config('app.name') }}</title>
 
-        <link rel="preconnect" href="https://fonts.bunny.net">
-
         <link rel="manifest" href="{{ asset('manifest.json') }}">
         <meta name="theme-color" content="#4F46E5">
         <meta name="apple-mobile-web-app-capable" content="yes">
@@ -43,8 +41,6 @@
         @else
             <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90' fill='%234f46e5'>{{ substr(config('app.name'), 0, 1) }}</text></svg>">
         @endif
-        <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
-
         @vite(['resources/css/app.css', 'resources/js/app.js'])
 
         @stack('styles')
@@ -98,5 +94,10 @@
                 navigator.serviceWorker.register('/sw.js');
             }
         </script>
+
+        <div x-data="{ show: !localStorage.getItem('cookie_consent') }" x-show="show" x-cloak class="fixed bottom-0 left-0 right-0 z-50 bg-gray-900 dark:bg-gray-950 text-white px-4 py-3 flex items-center justify-between gap-4 text-sm">
+            <p class="text-gray-300">{{ __('Este sitio utiliza cookies esenciales para su funcionamiento.') }} <a href="{{ route('privacy') }}" class="text-blue-400 hover:underline">{{ __('Más información') }}</a></p>
+            <button @click="localStorage.setItem('cookie_consent', '1'); show = false" class="shrink-0 px-4 py-1.5 bg-blue-600 hover:bg-blue-500 text-white font-medium rounded-lg transition-colors">{{ __('Aceptar') }}</button>
+        </div>
     </body>
 </html>

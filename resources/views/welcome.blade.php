@@ -63,5 +63,9 @@
                 </a>
             @endif
         </div>
+
+        <p class="mt-8 text-xs text-gray-400 dark:text-gray-500">
+            <a href="{{ route('privacy') }}" class="hover:underline">{{ __('Política de Privacidad') }}</a>
+        </p>
     </div>
 </x-guest-layout>

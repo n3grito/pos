@@ -1,2 +1,7 @@
 User-agent: *
-Disallow:
+Disallow: /storage/
+Disallow: /vendor/
+Sitemap: https://pos.n3grito.dev/sitemap.xml
+
+User-agent: GPTBot
+Disallow: /
