@@ -17,12 +17,12 @@ cd /var/www/pos
 # Copiar entorno
 cp .env.example .env
 # EDITAR .env con datos reales:
-#   DB_DATABASE=pos_system
-#   DB_USERNAME=pos_user
-#   DB_PASSWORD=tu_password_seguro
-#   APP_URL=https://tudominio.com  (o http://)
-#   APP_ENV=production
-#   APP_DEBUG=false
+   DB_DATABASE=pos_system
+   DB_USERNAME=pos_user
+   DB_PASSWORD=tu_password_seguro
+   APP_URL=https://tudominio.com  (o http://)
+   APP_ENV=production
+   APP_DEBUG=false
 
 # Generar APP_KEY
 php8.3 artisan key:generate
