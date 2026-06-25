@@ -93,17 +93,37 @@ class SettingsController extends Controller
     public function updateReceipt(Request $request)
     {
         $validated = $request->validate([
-            'store_name' => 'nullable|string|max:255',
-            'company_name' => 'nullable|string|max:255',
-            'address' => 'nullable|string|max:500',
-            'phone' => 'nullable|string|max:50',
-            'footer_text' => 'nullable|string|max:500',
             'show_seller' => 'boolean',
             'show_nit' => 'boolean',
         ]);
 
         $validated['show_seller'] = $request->boolean('show_seller');
         $validated['show_nit'] = $request->boolean('show_nit');
+
+        ReceiptSetting::updateOrCreate(['id' => 1], $validated);
+
+        return back()->with('success', 'Configuración de recibo guardada correctamente.');
+    }
+
+    public function general()
+    {
+        $registrationEnabled = GeneralSetting::get('registration_enabled', '1') === '1';
+        $receipt = ReceiptSetting::firstOrNew([]);
+
+        return view('settings.general', compact('registrationEnabled', 'receipt'));
+    }
+
+    public function updateGeneral(Request $request)
+    {
+        GeneralSetting::set('registration_enabled', $request->boolean('registration_enabled') ? '1' : '0');
+
+        $validated = $request->validate([
+            'company_name' => 'nullable|string|max:255',
+            'store_name' => 'nullable|string|max:255',
+            'address' => 'nullable|string|max:500',
+            'phone' => 'nullable|string|max:50',
+            'footer_text' => 'nullable|string|max:500',
+        ]);
 
         if ($request->hasFile('logo')) {
             $request->validate(['logo' => 'nullable|image|mimes:png,jpg,jpeg,svg,webp|max:2048']);
@@ -116,20 +136,6 @@ class SettingsController extends Controller
         }
 
         ReceiptSetting::updateOrCreate(['id' => 1], $validated);
-
-        return back()->with('success', 'Configuración de recibo guardada correctamente.');
-    }
-
-    public function general()
-    {
-        $registrationEnabled = GeneralSetting::get('registration_enabled', '1') === '1';
-
-        return view('settings.general', compact('registrationEnabled'));
-    }
-
-    public function updateGeneral(Request $request)
-    {
-        GeneralSetting::set('registration_enabled', $request->boolean('registration_enabled') ? '1' : '0');
 
         return back()->with('success', 'Configuración general guardada correctamente.');
     }
