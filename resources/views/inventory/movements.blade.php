@@ -11,7 +11,7 @@
 
                 <div class="p-4 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50">
                     <form method="GET" class="flex flex-wrap items-center gap-3">
-                        <div class="w-48">
+                        <div class="w-full sm:w-48">
                             <select name="product_id" class="block w-full border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm">
                                 <option value="">{{ __('Todos los productos') }}</option>
                                 @foreach ($products as $product)
@@ -19,7 +19,7 @@
                                 @endforeach
                             </select>
                         </div>
-                        <div class="w-36">
+                        <div class="w-full sm:w-36">
                             <select name="type" class="block w-full border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm">
                                 <option value="">{{ __('Todos los tipos') }}</option>
                                 <option value="in" {{ request('type') == 'in' ? 'selected' : '' }}>{{ __('Entrada') }}</option>
@@ -29,11 +29,11 @@
                                 <option value="warehouse_entry" {{ request('type') == 'warehouse_entry' ? 'selected' : '' }}>{{ __('Entrada Almacén') }}</option>
                             </select>
                         </div>
-                        <div>
-                            <input type="date" name="date_from" value="{{ request('date_from') }}" class="block w-40 border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm">
+                        <div class="w-full sm:w-auto">
+                            <input type="date" name="date_from" value="{{ request('date_from') }}" class="block w-full sm:w-40 border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm">
                         </div>
-                        <div>
-                            <input type="date" name="date_to" value="{{ request('date_to') }}" class="block w-40 border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm">
+                        <div class="w-full sm:w-auto">
+                            <input type="date" name="date_to" value="{{ request('date_to') }}" class="block w-full sm:w-40 border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm">
                         </div>
                         <button type="submit" class="inline-flex items-center px-3 py-2 bg-gray-600 dark:bg-gray-500 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-500 dark:hover:bg-gray-400">
                             {{ __('Filtrar') }}

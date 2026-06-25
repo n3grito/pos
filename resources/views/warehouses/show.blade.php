@@ -5,7 +5,7 @@
             <div class="space-y-6">
                 <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-6">
                     <h3 class="text-lg font-semibold text-gray-700 dark:text-gray-300 mb-4">{{ __('Información del Almacén') }}</h3>
-                    <dl class="grid grid-cols-2 gap-4 text-sm">
+                    <dl class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
                         <dt class="text-gray-500 dark:text-gray-400">{{ __('Nombre') }}</dt>
                         <dd class="font-medium text-gray-800 dark:text-gray-200">{{ $warehouse->name }}</dd>
                         <dt class="text-gray-500 dark:text-gray-400">{{ __('Descripción') }}</dt>

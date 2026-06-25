@@ -3,8 +3,8 @@
     <x-content-wrapper>
         <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl">
             <div class="p-6 border-b border-gray-100 dark:border-gray-700">
-                <form method="GET" class="flex items-center space-x-4">
-                    <div class="w-64">
+                <form method="GET" class="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:space-x-4">
+                    <div class="w-full sm:w-64">
                         <select name="warehouse_id" onchange="this.form.submit()" class="block w-full border-gray-300 dark:border-gray-600 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm">
                             <option value="">Seleccionar almacén</option>
                             @foreach ($warehouses as $w)

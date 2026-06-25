@@ -10,7 +10,7 @@
             </div>
         @endif
 
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <!-- Settings Form -->
             <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl">
                 <div class="p-6">
@@ -122,6 +122,7 @@
                             <div>{{ now()->format('d/m/Y H:i') }}</div>
                         </div>
                         <hr class="border-t border-dashed border-gray-400 dark:border-gray-500 my-2">
+                        <div class="overflow-x-auto">
                         <table class="w-full text-xs">
                             <tr>
                                 <td>{{ __('Producto ejemplo') }}</td>
@@ -130,6 +131,7 @@
                                 <td class="text-right">{{ currency(10) }}</td>
                             </tr>
                         </table>
+                        </div>
                         <hr class="border-t border-dashed border-gray-400 dark:border-gray-500 my-2">
                         <div class="text-right font-bold text-gray-900 dark:text-gray-100">{{ __('Total') }}: {{ currency(10) }}</div>
                         <hr class="border-t border-dashed border-gray-400 dark:border-gray-500 my-2">

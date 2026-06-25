@@ -25,10 +25,10 @@
 
                 <div class="p-4 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50">
                     <form method="GET" class="flex flex-wrap items-center gap-3">
-                        <div class="flex-1 min-w-[200px]">
+                        <div class="w-full sm:flex-1 sm:min-w-[200px]">
                             <input type="text" name="search" value="{{ request('search') }}" placeholder="{{ __('Buscar producto, SKU o código...') }}" class="block w-full border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm">
                         </div>
-                        <div class="w-40">
+                        <div class="w-full sm:w-40">
                             <select name="stock" class="block w-full border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm">
                                 <option value="">{{ __('Todo el stock') }}</option>
                                 <option value="low" {{ request('stock') == 'low' ? 'selected' : '' }}>{{ __('Stock Bajo') }}</option>
@@ -36,7 +36,7 @@
                                 <option value="available" {{ request('stock') == 'available' ? 'selected' : '' }}>{{ __('Disponible') }}</option>
                             </select>
                         </div>
-                        <div class="w-40">
+                        <div class="w-full sm:w-40">
                             <select name="sale" class="block w-full border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm">
                                 <option value="">{{ __('Venta: Todas') }}</option>
                                 <option value="yes" {{ request('sale') == 'yes' ? 'selected' : '' }}>{{ __('Vendible') }}</option>

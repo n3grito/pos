@@ -244,7 +244,7 @@
                             <span class="ml-1 inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-medium bg-blue-100 text-blue-700">Srv</span>
                         </td>
                         <td class="px-4 py-2">
-                            <input type="number" step="0.001" class="block w-16 border-gray-300 dark:border-gray-600 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm text-sm cart-qty" value="${item.quantity}" min="0.001" max="999999" data-index="${index}" />
+                            <input type="number" step="0.001" class="block w-full sm:w-16 border-gray-300 dark:border-gray-600 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm text-sm cart-qty" value="${item.quantity}" min="0.001" max="999999" data-index="${index}" />
                         </td>
                         <td class="px-4 py-2 text-sm text-gray-700">${item.price.toFixed(2)}</td>
                         <td class="px-4 py-2 text-sm text-gray-700 font-medium">${subtotal.toFixed(2)}</td>
@@ -256,7 +256,7 @@
                     tr.innerHTML = `
                         <td class="px-4 py-2 text-sm text-gray-900">${item.name}</td>
                         <td class="px-4 py-2">
-                            <input type="number" step="0.001" class="block w-16 border-gray-300 dark:border-gray-600 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm text-sm cart-qty" value="${item.quantity}" min="0.001" max="${item.stock}" data-index="${index}" />
+                            <input type="number" step="0.001" class="block w-full sm:w-16 border-gray-300 dark:border-gray-600 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm text-sm cart-qty" value="${item.quantity}" min="0.001" max="${item.stock}" data-index="${index}" />
                         </td>
                         <td class="px-4 py-2 text-sm text-gray-700">${item.price.toFixed(2)}</td>
                         <td class="px-4 py-2 text-sm text-gray-700 font-medium">${subtotal.toFixed(2)}</td>

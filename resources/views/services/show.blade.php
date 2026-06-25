@@ -2,7 +2,7 @@
     <x-slot name="header">{{ $service->name }}</x-slot>
     <x-content-wrapper>
         <div class="max-w-2xl mx-auto bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-6">
-            <dl class="grid grid-cols-2 gap-4 text-sm">
+            <dl class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
                 <dt class="text-gray-500 dark:text-gray-400">{{ __('Nombre') }}</dt>
                 <dd class="font-medium text-gray-800 dark:text-gray-200">{{ $service->name }}</dd>
                 <dt class="text-gray-500 dark:text-gray-400">{{ __('Descripción') }}</dt>
@@ -24,7 +24,7 @@
             </dl>
 
             <h4 class="font-semibold text-gray-700 dark:text-gray-300 mt-8 mb-3">{{ __('Productos incluidos') }}</h4>
-            <table class="w-full text-sm">
+            <div class="overflow-x-auto"><table class="w-full text-sm">
                 <thead class="bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-400">
                     <tr>
                         <th class="text-left px-4 py-2 font-semibold">{{ __('Producto') }}</th>
@@ -39,7 +39,7 @@
                     </tr>
                     @endforeach
                 </tbody>
-            </table>
+            </table></div>
 
             <div class="mt-8 flex space-x-3">
                 @can('service.update')
