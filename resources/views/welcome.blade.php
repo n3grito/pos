@@ -1,7 +1,7 @@
 <x-guest-layout>
     <div class="text-center">
         @if ($brand->logo_path)
-            <img src="{{ asset('storage/' . $brand->logo_path) }}" alt="{{ config('app.name') }}" class="h-16 w-auto mx-auto mb-4">
+            <img src="{{ logo_url($brand->logo_path) }}" alt="{{ config('app.name') }}" class="h-16 w-auto mx-auto mb-4">
         @else
             <x-application-logo class="h-16 w-16 fill-current text-blue-600 dark:text-blue-400 mx-auto mb-4" />
         @endif

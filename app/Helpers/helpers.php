@@ -15,3 +15,13 @@ if (!function_exists('currency_symbol')) {
         return CurrencyHelper::symbol();
     }
 }
+
+if (!function_exists('logo_url')) {
+    function logo_url(?string $path): ?string
+    {
+        if (!$path) {
+            return null;
+        }
+        return url('storage/' . $path);
+    }
+}

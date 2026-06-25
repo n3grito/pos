@@ -54,7 +54,7 @@
                                 <x-input-error :messages="$errors->get('logo')" class="mt-2" />
                                 @if ($receipt->logo_path)
                                     <div class="mt-2 flex items-center space-x-3">
-                                        <img src="{{ asset('storage/' . $receipt->logo_path) }}" alt="Logo" class="h-10 w-auto rounded border border-gray-200 dark:border-gray-700">
+                                        <img src="{{ logo_url($receipt->logo_path) }}" alt="Logo" class="h-10 w-auto rounded border border-gray-200 dark:border-gray-700">
                                         <label class="inline-flex items-center text-sm text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-300 cursor-pointer">
                                             <input type="checkbox" name="remove_logo" value="1" class="rounded border-gray-300 dark:border-gray-600 text-red-600 shadow-sm focus:ring-red-500 mr-1">
                                             {{ __('Eliminar logo') }}
@@ -79,7 +79,7 @@
                         <div class="border border-gray-200 dark:border-gray-700 rounded-lg p-4 bg-gray-50 dark:bg-gray-800/50 max-w-xs mx-auto">
                             <div class="flex items-center space-x-3">
                                 @if ($receipt->logo_path)
-                                    <img src="{{ asset('storage/' . $receipt->logo_path) }}" alt="Logo" class="h-10 w-auto">
+                                    <img src="{{ logo_url($receipt->logo_path) }}" alt="Logo" class="h-10 w-auto">
                                 @else
                                     <div class="h-10 w-10 bg-indigo-100 dark:bg-indigo-900/50 rounded-lg flex items-center justify-center text-indigo-600 dark:text-indigo-400 font-bold text-lg">
                                         {{ substr(old('company_name', $receipt->company_name ?? config('app.name')), 0, 1) }}

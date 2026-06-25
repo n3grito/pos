@@ -37,7 +37,7 @@
             $favicon = \App\Models\ReceiptSetting::firstOrNew([]);
         @endphp
         @if ($favicon->logo_path)
-            <link rel="icon" type="image/png" href="{{ asset('storage/' . $favicon->logo_path) }}">
+            <link rel="icon" type="image/png" href="{{ logo_url($favicon->logo_path) }}">
         @else
             <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90' fill='%234f46e5'>{{ substr(config('app.name'), 0, 1) }}</text></svg>">
         @endif

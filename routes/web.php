@@ -22,8 +22,17 @@ use App\Http\Controllers\WarehouseMovementController;
 use App\Http\Controllers\ManualController;
 use App\Http\Controllers\SettingsController;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Storage;
 
 use App\Http\Controllers\WelcomeController;
+
+// Fallback para servir archivos de storage cuando no existe el symlink public/storage
+Route::get('storage/{path}', function (string $path) {
+    if (!Storage::disk('public')->exists($path)) {
+        abort(404);
+    }
+    return response()->file(Storage::disk('public')->path($path));
+})->where('path', '.*');
 
 Route::get('/', [WelcomeController::class, 'index']);
 Route::view('/privacy', 'privacy')->name('privacy');

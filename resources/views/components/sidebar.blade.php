@@ -5,7 +5,7 @@
     <div class="flex items-center min-h-16 px-6 py-3 border-b border-gray-200 dark:border-gray-700">
         <a href="{{ route('dashboard') }}" class="flex items-center space-x-3">
             @if ($brand->logo_path)
-                <img src="{{ asset('storage/' . $brand->logo_path) }}" alt="{{ config('app.name') }}" class="h-9 w-auto">
+                <img src="{{ logo_url($brand->logo_path) }}" alt="{{ config('app.name') }}" class="h-9 w-auto">
             @else
                 <x-application-logo class="h-8 w-8 fill-current text-blue-600 dark:text-blue-400 shrink-0" />
             @endif
