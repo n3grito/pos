@@ -80,6 +80,30 @@
                             <x-input-error :messages="$errors->get('roles')" class="mt-2" />
                         </div>
 
+                        <div class="mt-6" x-data="{ showPermissions: false }">
+                            <button type="button" @click="showPermissions = !showPermissions" class="text-sm text-blue-600 dark:text-blue-400 hover:underline flex items-center gap-1">
+                                <svg :class="{'rotate-90': showPermissions}" class="w-4 h-4 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                                {{ __('Permisos directos') }}
+                            </button>
+                            <div x-show="showPermissions" class="mt-3">
+                                @php $userPermissions = $user->permissions->pluck('name')->toArray(); @endphp
+                                @foreach ($permissions as $module => $modulePermissions)
+                                    <div class="mb-4 border border-gray-200 dark:border-gray-700 rounded-lg p-3">
+                                        <h4 class="text-sm font-semibold text-gray-600 dark:text-gray-400 uppercase mb-2">{{ __(ucfirst($module)) }}</h4>
+                                        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
+                                            @foreach ($modulePermissions as $permission)
+                                                <label class="inline-flex items-center text-xs text-gray-700 dark:text-gray-300">
+                                                    <input type="checkbox" name="permissions[]" value="{{ $permission->name }}" {{ in_array($permission->name, old('permissions', $userPermissions)) ? 'checked' : '' }} class="rounded border-gray-300 dark:border-gray-600 text-indigo-600 shadow-sm focus:ring-indigo-500 mr-1">
+                                                    {{ __(str_replace('-', ' ', ucfirst(explode('.', $permission->name)[1]))) }}
+                                                </label>
+                                            @endforeach
+                                        </div>
+                                    </div>
+                                @endforeach
+                            </div>
+                            <x-input-error :messages="$errors->get('permissions')" class="mt-2" />
+                        </div>
+
                         <div class="flex items-center justify-end mt-6 space-x-3">
                             <a href="{{ route('users.index') }}" class="inline-flex items-center px-4 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md font-semibold text-xs text-gray-700 dark:text-gray-300 uppercase tracking-widest shadow-sm hover:bg-gray-50 dark:hover:bg-gray-600">
                                 {{ __('Cancelar') }}

@@ -29,6 +29,7 @@ use App\Http\Controllers\WelcomeController;
 use App\Http\Controllers\DatabaseBackupController;
 use App\Http\Controllers\DatabaseExplorerController;
 use App\Http\Controllers\LogViewerController;
+use App\Http\Controllers\ActivityLogController;
 
 // Fallback para servir archivos de storage cuando no existe el symlink public/storage
 Route::get('storage/{path}', function (string $path) {
@@ -123,6 +124,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('explorer/{table}', [DatabaseExplorerController::class, 'show'])->name('explorer.show');
         Route::post('explorer/query', [DatabaseExplorerController::class, 'query'])->name('explorer.query');
     });
+
+    Route::get('activity-logs', [ActivityLogController::class, 'index'])->name('activity-logs.index');
 
     Route::prefix('logs')->name('logs.')->group(function () {
         Route::get('/', [LogViewerController::class, 'index'])->name('index');

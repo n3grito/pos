@@ -41,6 +41,7 @@ class PermissionSeeder extends Seeder
             'cash-register-session.open',
             'cash-register-session.close',
             'cash-register-session.view-any',
+            'activity-log.view',
         ];
 
         $permissions = array_merge($permissions, $extra);

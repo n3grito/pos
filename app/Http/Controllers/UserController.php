@@ -7,6 +7,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Spatie\Permission\Models\Role;
+use Spatie\Permission\Models\Permission;
 
 class UserController extends Controller
 {
@@ -33,8 +34,9 @@ class UserController extends Controller
         $branches = Branch::all();
         $roles = Role::all();
         $warehouses = Warehouse::where('is_active', true)->get();
+        $permissions = Permission::all()->groupBy(fn ($p) => explode('.', $p->name)[0]);
 
-        return view('users.create', compact('branches', 'roles', 'warehouses'));
+        return view('users.create', compact('branches', 'roles', 'warehouses', 'permissions'));
     }
 
     public function store(Request $request)
@@ -43,8 +45,10 @@ class UserController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users,email',
             'password' => 'required|string|min:8|confirmed',
-            'roles' => 'required|array',
+            'roles' => 'nullable|array',
             'roles.*' => 'exists:roles,id',
+            'permissions' => 'nullable|array',
+            'permissions.*' => 'exists:permissions,name',
             'branch_id' => 'nullable|exists:branches,id',
             'warehouse_id' => 'nullable|exists:warehouses,id',
             'is_active' => 'boolean',
@@ -59,7 +63,8 @@ class UserController extends Controller
             'is_active' => $request->boolean('is_active'),
         ]);
 
-        $user->syncRoles($validated['roles']);
+        $user->syncRoles($validated['roles'] ?? []);
+        $user->syncPermissions($validated['permissions'] ?? []);
 
         session()->flash('success', 'Usuario creado exitosamente.');
         return redirect()->route('users.index');
@@ -74,12 +79,13 @@ class UserController extends Controller
 
     public function edit(User $user)
     {
-        $user->load('roles');
+        $user->load('roles', 'permissions');
         $branches = Branch::all();
         $roles = Role::all();
         $warehouses = Warehouse::where('is_active', true)->get();
+        $permissions = Permission::all()->groupBy(fn ($p) => explode('.', $p->name)[0]);
 
-        return view('users.edit', compact('user', 'branches', 'roles', 'warehouses'));
+        return view('users.edit', compact('user', 'branches', 'roles', 'warehouses', 'permissions'));
     }
 
     public function update(Request $request, User $user)
@@ -88,8 +94,10 @@ class UserController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users,email,' . $user->id,
             'password' => 'nullable|string|min:8|confirmed',
-            'roles' => 'required|array',
+            'roles' => 'nullable|array',
             'roles.*' => 'exists:roles,id',
+            'permissions' => 'nullable|array',
+            'permissions.*' => 'exists:permissions,name',
             'branch_id' => 'nullable|exists:branches,id',
             'warehouse_id' => 'nullable|exists:warehouses,id',
             'is_active' => 'boolean',
@@ -107,7 +115,8 @@ class UserController extends Controller
 
         $user->save();
 
-        $user->syncRoles($validated['roles']);
+        $user->syncRoles($validated['roles'] ?? []);
+        $user->syncPermissions($validated['permissions'] ?? []);
 
         session()->flash('success', 'Usuario actualizado exitosamente.');
         return redirect()->route('users.index');
