@@ -26,6 +26,10 @@ use Illuminate\Support\Facades\Storage;
 
 use App\Http\Controllers\WelcomeController;
 
+use App\Http\Controllers\DatabaseBackupController;
+use App\Http\Controllers\DatabaseExplorerController;
+use App\Http\Controllers\LogViewerController;
+
 // Fallback para servir archivos de storage cuando no existe el symlink public/storage
 Route::get('storage/{path}', function (string $path) {
     if (!Storage::disk('public')->exists($path)) {
@@ -106,6 +110,24 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('sales', [ReportController::class, 'salesByDate'])->name('sales');
         Route::get('top-products', [ReportController::class, 'topProducts'])->name('top-products');
         Route::get('low-stock', [ReportController::class, 'lowStock'])->name('low-stock');
+    });
+
+    Route::prefix('database')->name('database.')->group(function () {
+        Route::get('backups', [DatabaseBackupController::class, 'index'])->name('backups');
+        Route::post('backups', [DatabaseBackupController::class, 'create'])->name('backups.create');
+        Route::get('backups/{filename}/download', [DatabaseBackupController::class, 'download'])->name('backups.download');
+        Route::delete('backups/{filename}', [DatabaseBackupController::class, 'destroy'])->name('backups.destroy');
+        Route::post('backups/restore', [DatabaseBackupController::class, 'restore'])->name('backups.restore');
+
+        Route::get('explorer', [DatabaseExplorerController::class, 'index'])->name('explorer.index');
+        Route::get('explorer/{table}', [DatabaseExplorerController::class, 'show'])->name('explorer.show');
+        Route::post('explorer/query', [DatabaseExplorerController::class, 'query'])->name('explorer.query');
+    });
+
+    Route::prefix('logs')->name('logs.')->group(function () {
+        Route::get('/', [LogViewerController::class, 'index'])->name('index');
+        Route::get('{filename}', [LogViewerController::class, 'show'])->name('show');
+        Route::delete('{filename}', [LogViewerController::class, 'destroy'])->name('destroy');
     });
 });
 
