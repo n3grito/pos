@@ -1,11 +1,37 @@
+# Normalize line endings
 * text=auto eol=lf
 
-*.blade.php diff=html
-*.css diff=css
-*.html diff=html
-*.md diff=markdown
-*.php diff=php
+# PHP
+*.php text diff=php
 
-/.github export-ignore
-CHANGELOG.md export-ignore
-.styleci.yml export-ignore
+# Blade
+*.blade.php text
+
+# JavaScript / JSON
+*.js text
+*.json text
+
+# CSS / PostCSS
+*.css text
+*.postcss text
+
+# Config files
+*.env text eol=lf
+*.yml text
+*.yaml text
+*.xml text
+*.config.js text
+
+# Binary files
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.woff binary
+*.woff2 binary
+*.ttf binary
+*.eot binary
+
+# Shell scripts (must stay LF)
+*.sh text eol=lf

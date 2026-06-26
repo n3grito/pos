@@ -289,10 +289,7 @@
                         <svg class="w-4 h-4 mr-3 shrink-0 {{ request()->routeIs('activity-logs.*') ? 'text-blue-500 dark:text-blue-400' : 'text-gray-400 dark:text-gray-500' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>
                         Registro de Actividad
                     </a>
-                    @endcan
-                    @can('activity-log.view')
                     <div class="border-t border-gray-200 dark:border-gray-600 my-2"></div>
-                    @endcan
                     <a href="{{ route('database.backups') }}" class="flex items-center px-3 py-2 ml-8 text-sm font-medium rounded-lg transition-colors duration-150 {{ request()->routeIs('database.backups*') ? 'bg-blue-50 dark:bg-blue-900/50 text-blue-600 dark:text-blue-400' : 'text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-700 dark:hover:text-gray-200' }}">
                         <svg class="w-4 h-4 mr-3 shrink-0 {{ request()->routeIs('database.backups*') ? 'text-blue-500 dark:text-blue-400' : 'text-gray-400 dark:text-gray-500' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
                         Copias de Seguridad

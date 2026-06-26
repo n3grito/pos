@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use App\Models\ActivityLog;
 use App\Models\MailSetting;
+use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Event;
@@ -53,6 +54,10 @@ class AppServiceProvider extends ServiceProvider
                 'ip_address' => request()->ip(),
                 'user_agent' => request()->userAgent(),
             ]);
+        });
+
+        Blade::directive('viteSafe', function ($expression) {
+            return "<?php if (file_exists(public_path('build/manifest.json'))) { echo app('Illuminate\\Foundation\\Vite')->__invoke({$expression}); } ?>";
         });
 
         try {
