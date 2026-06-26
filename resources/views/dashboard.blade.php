@@ -67,6 +67,38 @@
             </div>
         </div>
 
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+            <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-5">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-base font-semibold text-gray-800 dark:text-gray-200">{{ __('Tendencia de Ventas') }}</h3>
+                    <span class="text-xs text-gray-400" data-chart-refresh="salesTrend">{{ __('Últimos 30 días') }}</span>
+                </div>
+                <div id="salesTrendChart" data-chart data-label="{{ __('Ventas') }}" style="min-height:300px"></div>
+            </div>
+
+            <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-5">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-base font-semibold text-gray-800 dark:text-gray-200">{{ __('Ventas por Método de Pago') }}</h3>
+                </div>
+                <div id="paymentMethodChart" data-chart data-total-label="{{ __('Total') }}" style="min-height:300px"></div>
+            </div>
+
+            <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-5">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-base font-semibold text-gray-800 dark:text-gray-200">{{ __('Productos Más Vendidos') }}</h3>
+                    <span class="text-xs text-gray-400">{{ __('Top 10') }}</span>
+                </div>
+                <div id="topProductsChart" data-chart data-label="{{ __('Cantidad') }}" data-unit="{{ __('uds') }}" style="min-height:300px"></div>
+            </div>
+
+            <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-5">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-base font-semibold text-gray-800 dark:text-gray-200">{{ __('Ventas por Día de la Semana') }}</h3>
+                </div>
+                <div id="dayOfWeekChart" data-chart data-label="{{ __('Ventas') }}" style="min-height:300px"></div>
+            </div>
+        </div>
+
         <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl">
             <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
                 <h3 class="text-base font-semibold text-gray-800 dark:text-gray-200">{{ __('Ventas Recientes') }}</h3>

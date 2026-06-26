@@ -101,5 +101,35 @@
             <p class="text-gray-300">{{ __('Este sitio utiliza cookies esenciales para su funcionamiento.') }} <a href="{{ route('privacy') }}" class="text-blue-400 hover:underline">{{ __('Más información') }}</a></p>
             <button @click="localStorage.setItem('cookie_consent', '1'); show = false" class="shrink-0 px-4 py-1.5 bg-blue-600 hover:bg-blue-500 text-white font-medium rounded-lg transition-colors">{{ __('Aceptar') }}</button>
         </div>
+
+        @can('activity-log.view')
+        <script>
+            document.addEventListener('alpine:init', () => {
+                setInterval(function() {
+                    fetch('{{ route('activity-logs.stream') }}?since=30')
+                        .then(r => r.json())
+                        .then(data => {
+                            if (data.count > 0) {
+                                const badge = document.getElementById('sidebarAlertBadge');
+                                if (badge) badge.classList.remove('hidden');
+
+                                data.alerts.forEach(function(alert) {
+                                    const toastManager = document.querySelector('[x-data="toastManager()"]');
+                                    if (toastManager && toastManager.__x) {
+                                        toastManager.__x.$data.addToast(alert.description,
+                                            alert.severity === 'critical' ? 'error' : 'warning', false);
+                                    }
+                                });
+
+                                setTimeout(() => {
+                                    if (badge) badge.classList.add('hidden');
+                                }, 30000);
+                            }
+                        })
+                        .catch(() => {});
+                }, 15000);
+            });
+        </script>
+        @endcan
     </body>
 </html>

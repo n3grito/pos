@@ -310,6 +310,7 @@
                     <a href="{{ route('activity-logs.index') }}" class="flex items-center px-3 py-2 ml-8 text-sm font-medium rounded-lg transition-colors duration-150 {{ request()->routeIs('activity-logs.*') ? 'bg-blue-50 dark:bg-blue-900/50 text-blue-600 dark:text-blue-400' : 'text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-700 dark:hover:text-gray-200' }}">
                         <svg class="w-4 h-4 mr-3 shrink-0 {{ request()->routeIs('activity-logs.*') ? 'text-blue-500 dark:text-blue-400' : 'text-gray-400 dark:text-gray-500' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>
                         {{ __('Registro de Actividad') }}
+                        <span id="sidebarAlertBadge" class="ml-auto hidden w-2 h-2 rounded-full bg-red-500 animate-pulse"></span>
                     </a>
                     @endcan
                     @canany(['database.backup', 'database.explorer', 'log.viewer'])

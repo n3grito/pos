@@ -69,8 +69,20 @@ return [
             'driver' => 'daily',
             'path' => storage_path('logs/laravel.log'),
             'level' => env('LOG_LEVEL', 'debug'),
-            'days' => env('LOG_DAILY_DAYS', 14),
+            'days' => env('LOG_DAILY_DAYS', 90),
             'replace_placeholders' => true,
+        ],
+
+        'syslog_production' => [
+            'driver' => 'monolog',
+            'level' => env('LOG_LEVEL', 'warning'),
+            'handler' => Monolog\Handler\SyslogUdpHandler::class,
+            'handler_with' => [
+                'host' => env('SYSLOG_HOST', env('PAPERTRAIL_URL')),
+                'port' => env('SYSLOG_PORT', env('PAPERTRAIL_PORT')),
+                'connectionString' => 'tls://'.env('SYSLOG_HOST', env('PAPERTRAIL_URL')).':'.env('SYSLOG_PORT', env('PAPERTRAIL_PORT')),
+            ],
+            'processors' => [PsrLogMessageProcessor::class],
         ],
 
         'slack' => [

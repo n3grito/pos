@@ -51,8 +51,9 @@ Route::get('/locale/{locale}', function (string $locale) {
 Route::get('/', [WelcomeController::class, 'index']);
 Route::view('/privacy', 'privacy')->name('privacy');
 
-Route::middleware(['auth', 'verified'])->group(function () {
+Route::middleware(['auth', 'verified', 'throttle:global'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/dashboard/chart-data', [DashboardController::class, 'chartData'])->name('dashboard.chart-data');
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
@@ -60,22 +61,22 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::resource('branches', BranchController::class);
     Route::resource('categories', CategoryController::class);
-    Route::resource('products', ProductController::class);
-    Route::post('products/import', [ProductController::class, 'import'])->name('products.import');
-    Route::get('products/export/download', [ProductController::class, 'export'])->name('products.export');
-    Route::resource('services', ServiceController::class);
-    Route::post('services/import', [ServiceController::class, 'import'])->name('services.import');
-    Route::get('services/export/download', [ServiceController::class, 'export'])->name('services.export');
+    Route::resource('products', ProductController::class)->middleware('throttle:sensitive');
+    Route::post('products/import', [ProductController::class, 'import'])->name('products.import')->middleware('throttle:sensitive');
+    Route::get('products/export/download', [ProductController::class, 'export'])->name('products.export')->middleware('throttle:exports');
+    Route::resource('services', ServiceController::class)->middleware('throttle:sensitive');
+    Route::post('services/import', [ServiceController::class, 'import'])->name('services.import')->middleware('throttle:sensitive');
+    Route::get('services/export/download', [ServiceController::class, 'export'])->name('services.export')->middleware('throttle:exports');
     Route::resource('clients', ClientController::class);
     Route::resource('suppliers', SupplierController::class);
-    Route::resource('purchases', PurchaseController::class);
+    Route::resource('purchases', PurchaseController::class)->middleware('throttle:sensitive');
     Route::get('purchases/kanban/view', [PurchaseController::class, 'kanban'])->name('purchases.kanban');
     Route::resource('sales', SaleController::class);
     Route::get('sales/kanban/view', [SaleController::class, 'kanban'])->name('sales.kanban');
-    Route::resource('price-lists', PriceListController::class)->except('show');
+    Route::resource('price-lists', PriceListController::class)->except('show')->middleware('throttle:sensitive');
     Route::resource('cash-registers', CashRegisterController::class);
-    Route::resource('users', UserController::class);
-    Route::resource('roles', RoleController::class);
+    Route::resource('users', UserController::class)->middleware('throttle:sensitive');
+    Route::resource('roles', RoleController::class)->middleware('throttle:sensitive');
     Route::resource('currencies', CurrencyController::class);
 
     Route::prefix('inventory')->name('inventory.')->group(function () {
@@ -110,10 +111,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/settings/general', [SettingsController::class, 'general'])->name('settings.general');
     Route::post('/settings/general', [SettingsController::class, 'updateGeneral'])->name('settings.general.update');
 
-    Route::put('sales/{sale}/cancel', [SaleController::class, 'cancel'])->name('sales.cancel');
+    Route::put('sales/{sale}/cancel', [SaleController::class, 'cancel'])->name('sales.cancel')->middleware('throttle:sensitive');
 
-    Route::post('cash-registers/{cashRegister}/open', [CashRegisterSessionController::class, 'open'])->name('cash-registers.open');
-    Route::post('cash-register-sessions/{cashRegisterSession}/close', [CashRegisterSessionController::class, 'close'])->name('cash-register-sessions.close');
+    Route::post('cash-registers/{cashRegister}/open', [CashRegisterSessionController::class, 'open'])->name('cash-registers.open')->middleware('throttle:sensitive');
+    Route::post('cash-register-sessions/{cashRegisterSession}/close', [CashRegisterSessionController::class, 'close'])->name('cash-register-sessions.close')->middleware('throttle:sensitive');
     Route::get('cash-register-sessions', [CashRegisterSessionController::class, 'index'])->name('cash-register-sessions.index');
 
     Route::get('/manuals', [ManualController::class, 'index'])->name('manuals.index');
@@ -127,17 +128,19 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::prefix('database')->name('database.')->group(function () {
         Route::get('backups', [DatabaseBackupController::class, 'index'])->name('backups');
-        Route::post('backups', [DatabaseBackupController::class, 'create'])->name('backups.create');
+        Route::post('backups', [DatabaseBackupController::class, 'create'])->name('backups.create')->middleware('throttle:sensitive');
         Route::get('backups/{filename}/download', [DatabaseBackupController::class, 'download'])->name('backups.download');
-        Route::delete('backups/{filename}', [DatabaseBackupController::class, 'destroy'])->name('backups.destroy');
-        Route::post('backups/restore', [DatabaseBackupController::class, 'restore'])->name('backups.restore');
+        Route::delete('backups/{filename}', [DatabaseBackupController::class, 'destroy'])->name('backups.destroy')->middleware('throttle:sensitive');
+        Route::post('backups/restore', [DatabaseBackupController::class, 'restore'])->name('backups.restore')->middleware('throttle:sensitive');
 
         Route::get('explorer', [DatabaseExplorerController::class, 'index'])->name('explorer.index');
         Route::get('explorer/{table}', [DatabaseExplorerController::class, 'show'])->name('explorer.show');
-        Route::post('explorer/query', [DatabaseExplorerController::class, 'query'])->name('explorer.query');
+        Route::post('explorer/query', [DatabaseExplorerController::class, 'query'])->name('explorer.query')->middleware('throttle:sensitive');
     });
 
     Route::get('activity-logs', [ActivityLogController::class, 'index'])->name('activity-logs.index');
+    Route::get('activity-logs/recent-alerts', [ActivityLogController::class, 'recentAlerts'])->name('activity-logs.recent-alerts');
+    Route::get('activity-logs/stream', [ActivityLogController::class, 'stream'])->name('activity-logs.stream');
 
     Route::prefix('logs')->name('logs.')->group(function () {
         Route::get('/', [LogViewerController::class, 'index'])->name('index');

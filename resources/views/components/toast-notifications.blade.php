@@ -49,6 +49,10 @@
                     setTimeout(() => this.removeToast(this.toasts.indexOf(toast)), 5000);
                 }
             },
+            showAlert(message, severity) {
+                const type = severity === 'critical' ? 'error' : severity === 'warning' ? 'warning' : 'info';
+                this.addToast(message, type, false);
+            },
             removeToast(index) {
                 if (this.toasts[index]) {
                     this.toasts[index].visible = false;
