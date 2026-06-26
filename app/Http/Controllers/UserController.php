@@ -64,7 +64,8 @@ class UserController extends Controller
             'is_active' => $request->boolean('is_active'),
         ]);
 
-        $user->syncRoles($validated['roles'] ?? []);
+        $roles = Role::whereIn('id', $validated['roles'] ?? [])->pluck('name')->toArray();
+        $user->syncRoles($roles);
         $user->syncPermissions($validated['permissions'] ?? []);
 
         session()->flash('success', 'Usuario creado exitosamente.');
@@ -116,7 +117,8 @@ class UserController extends Controller
 
         $user->save();
 
-        $user->syncRoles($validated['roles'] ?? []);
+        $roles = Role::whereIn('id', $validated['roles'] ?? [])->pluck('name')->toArray();
+        $user->syncRoles($roles);
         $user->syncPermissions($validated['permissions'] ?? []);
 
         session()->flash('success', 'Usuario actualizado exitosamente.');
