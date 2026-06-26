@@ -43,7 +43,7 @@ class BranchController extends Controller
             return response()->json(['message' => 'Branch created successfully.'], 201);
         }
 
-        session()->flash('success', 'Branch created successfully.');
+        toast('Branch created successfully.', 'success');
         return redirect()->route('branches.index');
     }
 
@@ -72,7 +72,7 @@ class BranchController extends Controller
             return response()->json(['message' => 'Branch updated successfully.']);
         }
 
-        session()->flash('success', 'Branch updated successfully.');
+        toast('Branch updated successfully.', 'success');
         return redirect()->route('branches.index');
     }
 
@@ -84,7 +84,7 @@ class BranchController extends Controller
             return response()->json(['message' => 'Branch deleted successfully.']);
         }
 
-        session()->flash('success', 'Branch deleted successfully.');
+        toast('Branch deleted successfully.', 'success');
         return redirect()->route('branches.index');
     }
 }

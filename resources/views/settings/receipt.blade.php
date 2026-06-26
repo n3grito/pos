@@ -4,11 +4,6 @@
     </x-slot>
 
     <x-content-wrapper>
-        @if (session('success'))
-            <div class="mb-4 px-4 py-3 bg-green-50 dark:bg-green-900/50 border border-green-200 text-green-700 dark:text-green-400 rounded-lg">
-                {{ session('success') }}
-            </div>
-        @endif
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <!-- Checkboxes -->

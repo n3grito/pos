@@ -4,18 +4,15 @@
 </x-slot>
 
     <x-content-wrapper>
-            @if (session('success'))
-                <div class="mb-4 px-4 py-3 bg-green-50 dark:bg-green-900/50 border border-green-200 dark:border-green-700 text-green-700 dark:text-green-400 rounded-lg">
-                    {{ session('success') }}
-                </div>
-            @endif
 
             <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl">
                 <div class="p-6 flex justify-between items-center border-b border-gray-200 dark:border-gray-700">
                     <h3 class="text-lg font-semibold text-gray-700 dark:text-gray-300">{{ __('Listado de Ventas') }}</h3>
+                    @can('sale.create')
                     <a href="{{ route('sales.create') }}" class="inline-flex items-center px-4 py-2 bg-blue-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-blue-500">
                         {{ __('Nueva Venta') }}
                     </a>
+                    @endcan
                 </div>
 
                 <div class="p-4 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50">
@@ -85,7 +82,9 @@
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">{{ $sale->created_at->format('d/m/Y H:i') }}</td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
+                                        @can('sale.view')
                                         <a href="{{ route('sales.show', $sale) }}" class="text-blue-600 dark:text-blue-400 hover:text-blue-900">{{ __('Ver') }}</a>
+                                        @endcan
                                     </td>
                                 </tr>
                             @empty

@@ -15,7 +15,7 @@ class DatabaseBackupController extends Controller
 
     public function __construct()
     {
-        $this->middleware('can:admin');
+        $this->middleware('can:database.backup');
     }
 
     public function index()
@@ -79,7 +79,8 @@ class DatabaseBackupController extends Controller
         $filename = 'backup-' . now()->format('Y-m-d-Hi') . '.sql';
         Storage::disk($this->disk)->put($this->path . '/' . $filename, $sql);
 
-        return redirect()->route('database.backups')->with('success', "Backup creado: $filename");
+        toast("Backup creado: $filename", 'success');
+        return redirect()->route('database.backups');
     }
 
     public function download($filename)
@@ -98,7 +99,8 @@ class DatabaseBackupController extends Controller
             abort(404);
         }
         Storage::disk($this->disk)->delete($filepath);
-        return redirect()->route('database.backups')->with('success', "Backup eliminado: $filename");
+        toast("Backup eliminado: $filename", 'success');
+        return redirect()->route('database.backups');
     }
 
     public function restore(Request $request)
@@ -126,6 +128,7 @@ class DatabaseBackupController extends Controller
         }
         DB::statement('SET FOREIGN_KEY_CHECKS=1');
 
-        return redirect()->route('database.backups')->with('success', "Base de datos restaurada desde: $filename");
+        toast("Base de datos restaurada desde: $filename", 'success');
+        return redirect()->route('database.backups');
     }
 }

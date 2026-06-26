@@ -4,17 +4,6 @@
 </x-slot>
 
     <x-content-wrapper class="space-y-6">
-            @if (session('success'))
-                <div class="p-4 mb-4 text-sm text-green-700 dark:text-green-400 bg-green-100 dark:bg-green-900/50 rounded-lg">
-                    {{ session('success') }}
-                </div>
-            @endif
-
-            @if (session('error'))
-                <div class="p-4 mb-4 text-sm text-red-700 dark:text-red-400 bg-red-100 dark:bg-red-900/50 rounded-lg">
-                    {{ session('error') }}
-                </div>
-            @endif
 
             <div class="p-6 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl">
                 <div class="max-w-xl">

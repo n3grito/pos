@@ -4,24 +4,15 @@
 </x-slot>
 
     <x-content-wrapper>
-            @if (session('success'))
-                <div class="mb-4 px-4 py-3 bg-green-50 dark:bg-green-900/50 border border-green-200 text-green-700 dark:text-green-400 rounded-lg">
-                    {{ session('success') }}
-                </div>
-            @endif
-
-            @if (session('error'))
-                <div class="mb-4 px-4 py-3 bg-red-100 dark:bg-red-900/50 border border-red-400 text-red-700 dark:text-red-400 rounded">
-                    {{ session('error') }}
-                </div>
-            @endif
 
             <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl">
                 <div class="p-6 flex justify-between items-center border-b border-gray-200 dark:border-gray-700">
                     <h3 class="text-lg font-semibold text-gray-700 dark:text-gray-300">{{ __('Listado de Usuarios') }}</h3>
+                    @can('user.create')
                     <a href="{{ route('users.create') }}" class="inline-flex items-center px-4 py-2 bg-blue-600 dark:bg-blue-500 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-blue-500 dark:hover:bg-blue-600">
                         {{ __('Nuevo Usuario') }}
                     </a>
+                    @endcan
                 </div>
 
                 <div class="p-4 border-b border-gray-200 dark:border-gray-700">
@@ -66,13 +57,19 @@
                                         </span>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
+                                        @can('user.view')
                                         <a href="{{ route('users.show', $user) }}" class="text-blue-600 dark:text-blue-400 hover:text-blue-900 dark:hover:text-blue-300">{{ __('Ver') }}</a>
+                                        @endcan
+                                        @can('user.update')
                                         <a href="{{ route('users.edit', $user) }}" class="text-indigo-600 dark:text-indigo-400 hover:text-indigo-900 dark:hover:text-indigo-300">{{ __('Editar') }}</a>
+                                        @endcan
+                                        @can('user.delete')
                                         <form action="{{ route('users.destroy', $user) }}" method="POST" class="inline" onsubmit="return confirm('{{ __('¿Está seguro de eliminar este usuario?') }}')">
                                             @csrf
                                             @method('DELETE')
                                             <button type="submit" class="text-red-600 dark:text-red-400 hover:text-red-900 dark:hover:text-red-300">{{ __('Eliminar') }}</button>
                                         </form>
+                                        @endcan
                                     </td>
                                 </tr>
                             @empty

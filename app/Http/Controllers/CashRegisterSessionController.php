@@ -32,7 +32,7 @@ class CashRegisterSessionController extends Controller
             if ($request->wantsJson()) {
                 return response()->json(['message' => 'This cash register already has an open session.'], 400);
             }
-            session()->flash('error', 'This cash register already has an open session.');
+            toast('This cash register already has an open session.', 'error', true);
             return redirect()->back();
         }
 
@@ -54,7 +54,7 @@ class CashRegisterSessionController extends Controller
             return response()->json(['message' => 'Session opened successfully.', 'session' => $session], 201);
         }
 
-        session()->flash('success', 'Session opened successfully.');
+        toast('Session opened successfully.', 'success');
         return redirect()->route('cash-register-sessions.index');
     }
 
@@ -64,7 +64,7 @@ class CashRegisterSessionController extends Controller
             if ($request->wantsJson()) {
                 return response()->json(['message' => 'Session is already closed.'], 400);
             }
-            session()->flash('error', 'Session is already closed.');
+            toast('Session is already closed.', 'error', true);
             return redirect()->back();
         }
 
@@ -84,7 +84,7 @@ class CashRegisterSessionController extends Controller
             return response()->json(['message' => 'Session closed successfully.', 'session' => $cashRegisterSession]);
         }
 
-        session()->flash('success', 'Session closed successfully.');
+        toast('Session closed successfully.', 'success');
         return redirect()->route('cash-register-sessions.index');
     }
 }

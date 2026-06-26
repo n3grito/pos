@@ -1,20 +1,16 @@
 <x-app-layout>
     <x-slot name="header">{{ __('Almacenes') }}</x-slot>
     <x-content-wrapper>
-        @if (session('success'))
-            <div class="mb-4 px-4 py-3 bg-green-50 dark:bg-green-900/50 border border-green-200 dark:border-green-800 text-green-700 dark:text-green-300 rounded-lg">{{ session('success') }}</div>
-        @endif
-        @if (session('error'))
-            <div class="mb-4 px-4 py-3 bg-red-50 dark:bg-red-900/50 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-300 rounded-lg">{{ session('error') }}</div>
-        @endif
 
         <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl">
             <div class="p-6 border-b border-gray-100 dark:border-gray-700 flex items-center justify-between">
                 <h3 class="text-lg font-semibold text-gray-700 dark:text-gray-300">{{ __('Lista de Almacenes') }}</h3>
+                @can('warehouse.create')
                 <a href="{{ route('warehouses.create') }}" class="inline-flex items-center px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700 transition-colors">
                     <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                     Nuevo Almacén
                 </a>
+                @endcan
             </div>
 
             <div class="overflow-x-auto">
@@ -45,12 +41,18 @@
                                 </td>
                                 <td class="px-6 py-4 text-right">
                                     <div class="flex items-center justify-end space-x-2">
+                                        @can('warehouse.view')
                                         <a href="{{ route('warehouses.show', $warehouse) }}" class="px-3 py-1.5 text-xs font-medium text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/50 rounded-lg hover:bg-blue-100 dark:hover:bg-blue-900 transition-colors">Ver</a>
+                                        @endcan
+                                        @can('warehouse.update')
                                         <a href="{{ route('warehouses.edit', $warehouse) }}" class="px-3 py-1.5 text-xs font-medium text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-900/50 rounded-lg hover:bg-amber-100 dark:hover:bg-amber-900 transition-colors">Editar</a>
+                                        @endcan
+                                        @can('warehouse.delete')
                                         <form method="POST" action="{{ route('warehouses.destroy', $warehouse) }}" onsubmit="return confirm('¿Eliminar este almacén?')">
                                             @csrf @method('DELETE')
                                             <button type="submit" class="px-3 py-1.5 text-xs font-medium text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-900/50 rounded-lg hover:bg-red-100 dark:hover:bg-red-900 transition-colors">Eliminar</button>
                                         </form>
+                                        @endcan
                                     </div>
                                 </td>
                             </tr>

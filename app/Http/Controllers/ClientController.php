@@ -45,7 +45,7 @@ class ClientController extends Controller
             return response()->json(['message' => 'Client created successfully.'], 201);
         }
 
-        session()->flash('success', 'Client created successfully.');
+        toast('Client created successfully.', 'success');
         return redirect()->route('clients.index');
     }
 
@@ -76,7 +76,7 @@ class ClientController extends Controller
             return response()->json(['message' => 'Client updated successfully.']);
         }
 
-        session()->flash('success', 'Client updated successfully.');
+        toast('Client updated successfully.', 'success');
         return redirect()->route('clients.index');
     }
 
@@ -88,7 +88,7 @@ class ClientController extends Controller
             return response()->json(['message' => 'Client deleted successfully.']);
         }
 
-        session()->flash('success', 'Client deleted successfully.');
+        toast('Client deleted successfully.', 'success');
         return redirect()->route('clients.index');
     }
 }

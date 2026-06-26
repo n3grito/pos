@@ -4,18 +4,15 @@
 </x-slot>
 
     <x-content-wrapper>
-            @if (session('success'))
-                <div class="mb-4 px-4 py-3 bg-green-50 dark:bg-green-900/50 border border-green-200 dark:border-green-800 text-green-700 dark:text-green-300 rounded-lg">
-                    {{ session('success') }}
-                </div>
-            @endif
 
             <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl">
                 <div class="p-6 flex justify-between items-center border-b border-gray-200 dark:border-gray-700">
                     <h3 class="text-lg font-semibold text-gray-700 dark:text-gray-300">{{ __('Listado de Clientes') }}</h3>
+                    @can('client.create')
                     <a href="{{ route('clients.create') }}" class="inline-flex items-center px-4 py-2 bg-blue-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-blue-500">
                         {{ __('Nuevo Cliente') }}
                     </a>
+                    @endcan
                 </div>
                 <div class="overflow-x-auto">
                     <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
@@ -36,13 +33,19 @@
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">{{ $client->phone ?? '-' }}</td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">{{ $client->document_number ?? '-' }}</td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
+                                        @can('client.view')
                                         <a href="{{ route('clients.show', $client) }}" class="text-blue-600 dark:text-blue-400 hover:text-blue-900 dark:hover:text-blue-300">{{ __('Ver') }}</a>
+                                        @endcan
+                                        @can('client.update')
                                         <a href="{{ route('clients.edit', $client) }}" class="text-indigo-600 dark:text-indigo-400 hover:text-indigo-900 dark:hover:text-indigo-300">{{ __('Editar') }}</a>
+                                        @endcan
+                                        @can('client.delete')
                                         <form action="{{ route('clients.destroy', $client) }}" method="POST" class="inline" onsubmit="return confirm('{{ __('¿Está seguro?') }}')">
                                             @csrf
                                             @method('DELETE')
                                             <button type="submit" class="text-red-600 dark:text-red-400 hover:text-red-900 dark:hover:text-red-300">{{ __('Eliminar') }}</button>
                                         </form>
+                                        @endcan
                                     </td>
                                 </tr>
                             @empty

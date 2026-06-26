@@ -4,11 +4,6 @@
     </x-slot>
 
     <x-content-wrapper>
-        @if (session('success'))
-            <div class="mb-6 px-4 py-3 bg-green-50 dark:bg-green-900/50 border border-green-200 dark:border-green-800 text-green-700 dark:text-green-400 rounded-lg text-sm">
-                {{ session('success') }}
-            </div>
-        @endif
 
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-5 mb-8">
             <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-5">

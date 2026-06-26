@@ -11,7 +11,7 @@ class LogViewerController extends Controller
 
     public function __construct()
     {
-        $this->middleware('can:admin');
+        $this->middleware('can:log.viewer');
         $this->logPath = storage_path('logs');
     }
 
@@ -58,6 +58,7 @@ class LogViewerController extends Controller
             abort(404);
         }
         unlink($filepath);
-        return redirect()->route('logs.index')->with('success', "Log eliminado: $filename");
+        toast("Log eliminado: $filename", 'success');
+        return redirect()->route('logs.index');
     }
 }

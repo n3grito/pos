@@ -15,6 +15,7 @@ class DatabaseSeeder extends Seeder
     {
         $this->call(PermissionSeeder::class);
         $this->call(UnitSeeder::class);
+        $this->call(PriceListSeeder::class);
 
         $admin = User::factory()->create([
             'name' => 'Admin',

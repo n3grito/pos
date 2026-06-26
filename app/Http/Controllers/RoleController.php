@@ -43,7 +43,7 @@ class RoleController extends Controller
         $role = Role::create(['name' => $validated['name']]);
         $role->syncPermissions($validated['permissions']);
 
-        session()->flash('success', 'Rol creado exitosamente.');
+        toast('Rol creado exitosamente.', 'success');
         return redirect()->route('roles.index');
     }
 
@@ -69,20 +69,20 @@ class RoleController extends Controller
         $role->update(['name' => $validated['name']]);
         $role->syncPermissions($validated['permissions']);
 
-        session()->flash('success', 'Rol actualizado exitosamente.');
+        toast('Rol actualizado exitosamente.', 'success');
         return redirect()->route('roles.index');
     }
 
     public function destroy(Role $role)
     {
         if ($role->name === 'Admin') {
-            session()->flash('error', 'No se puede eliminar el rol Admin.');
+            toast('No se puede eliminar el rol Admin.', 'error', true);
             return redirect()->route('roles.index');
         }
 
         $role->delete();
 
-        session()->flash('success', 'Rol eliminado exitosamente.');
+        toast('Rol eliminado exitosamente.', 'success');
         return redirect()->route('roles.index');
     }
 }

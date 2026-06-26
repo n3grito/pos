@@ -41,7 +41,7 @@ class WarehouseController extends Controller
 
         Warehouse::create($validated);
 
-        session()->flash('success', 'Almacén creado correctamente.');
+        toast('Almacén creado correctamente.', 'success');
         return redirect()->route('warehouses.index');
     }
 
@@ -73,19 +73,20 @@ class WarehouseController extends Controller
 
         $warehouse->update($validated);
 
-        session()->flash('success', 'Almacén actualizado correctamente.');
+        toast('Almacén actualizado correctamente.', 'success');
         return redirect()->route('warehouses.index');
     }
 
     public function destroy(Warehouse $warehouse)
     {
         if ($warehouse->stock()->sum('quantity') > 0) {
-            return back()->with('error', 'No se puede eliminar un almacén con existencias.');
+            toast('No se puede eliminar un almacén con existencias.', 'error', true);
+            return back();
         }
 
         $warehouse->delete();
 
-        session()->flash('success', 'Almacén eliminado correctamente.');
+        toast('Almacén eliminado correctamente.', 'success');
         return redirect()->route('warehouses.index');
     }
 }

@@ -4,11 +4,6 @@
 </x-slot>
 
     <x-content-wrapper>
-            @if (session('success'))
-                <div class="mb-4 px-4 py-3 bg-green-50 dark:bg-green-900/50 border border-green-200 dark:border-green-800 text-green-700 dark:text-green-300 rounded-lg">
-                    {{ session('success') }}
-                </div>
-            @endif
 
             <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl">
                 <div class="p-6 flex flex-wrap items-center justify-between gap-4 border-b border-gray-200 dark:border-gray-700">

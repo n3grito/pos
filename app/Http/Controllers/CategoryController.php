@@ -41,7 +41,7 @@ class CategoryController extends Controller
             return response()->json(['message' => 'Category created successfully.'], 201);
         }
 
-        session()->flash('success', 'Category created successfully.');
+        toast('Category created successfully.', 'success');
         return redirect()->route('categories.index');
     }
 
@@ -68,7 +68,7 @@ class CategoryController extends Controller
             return response()->json(['message' => 'Category updated successfully.']);
         }
 
-        session()->flash('success', 'Category updated successfully.');
+        toast('Category updated successfully.', 'success');
         return redirect()->route('categories.index');
     }
 
@@ -80,7 +80,7 @@ class CategoryController extends Controller
             return response()->json(['message' => 'Category deleted successfully.']);
         }
 
-        session()->flash('success', 'Category deleted successfully.');
+        toast('Category deleted successfully.', 'success');
         return redirect()->route('categories.index');
     }
 }

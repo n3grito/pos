@@ -21,6 +21,7 @@ use App\Http\Controllers\WarehouseController;
 use App\Http\Controllers\WarehouseMovementController;
 use App\Http\Controllers\ManualController;
 use App\Http\Controllers\SettingsController;
+use App\Http\Controllers\PriceListController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Storage;
 
@@ -38,6 +39,14 @@ Route::get('storage/{path}', function (string $path) {
     }
     return response()->file(Storage::disk('public')->path($path));
 })->where('path', '.*');
+
+Route::get('/locale/{locale}', function (string $locale) {
+    if (in_array($locale, ['es_MX', 'en_US', 'en_GB'])) {
+        session(['locale' => $locale]);
+        app()->setLocale($locale);
+    }
+    return redirect()->back();
+})->name('locale.switch');
 
 Route::get('/', [WelcomeController::class, 'index']);
 Route::view('/privacy', 'privacy')->name('privacy');
@@ -60,7 +69,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('clients', ClientController::class);
     Route::resource('suppliers', SupplierController::class);
     Route::resource('purchases', PurchaseController::class);
+    Route::get('purchases/kanban/view', [PurchaseController::class, 'kanban'])->name('purchases.kanban');
     Route::resource('sales', SaleController::class);
+    Route::get('sales/kanban/view', [SaleController::class, 'kanban'])->name('sales.kanban');
+    Route::resource('price-lists', PriceListController::class)->except('show');
     Route::resource('cash-registers', CashRegisterController::class);
     Route::resource('users', UserController::class);
     Route::resource('roles', RoleController::class);

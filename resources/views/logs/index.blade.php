@@ -5,9 +5,6 @@
 
     <div class="py-6">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            @if(session('success'))
-                <div class="mb-4 p-4 bg-green-100 dark:bg-green-900/50 text-green-800 dark:text-green-200 rounded-lg">{{ session('success') }}</div>
-            @endif
 
             <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm overflow-hidden">
                 @if($files->isEmpty())

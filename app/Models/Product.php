@@ -79,6 +79,20 @@ class Product extends Model
         return $this->hasMany(WarehouseStock::class);
     }
 
+    public function priceLists()
+    {
+        return $this->belongsToMany(PriceList::class, 'product_prices')->withPivot('price');
+    }
+
+    public function getPriceForList(?PriceList $priceList): float
+    {
+        if (!$priceList) {
+            return (float) $this->selling_price;
+        }
+        $pivot = $this->priceLists()->where('price_list_id', $priceList->id)->first();
+        return $pivot ? (float) $pivot->pivot->price : (float) $this->selling_price;
+    }
+
     public function scopeForBranch($query, $branchId)
     {
         return $query->where('branch_id', $branchId);

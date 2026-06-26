@@ -1,12 +1,6 @@
 <x-app-layout>
     <x-slot name="header">{{ __('Entrada a Inventario') }}</x-slot>
     <x-content-wrapper>
-        @if (session('success'))
-            <div class="mb-4 px-4 py-3 bg-green-50 dark:bg-green-900/50 border border-green-200 dark:border-green-800 text-green-700 dark:text-green-300 rounded-lg">{{ session('success') }}</div>
-        @endif
-        @if (session('error'))
-            <div class="mb-4 px-4 py-3 bg-red-50 dark:bg-red-900/50 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-300 rounded-lg">{{ session('error') }}</div>
-        @endif
 
         <div class="max-w-2xl mx-auto space-y-6">
 

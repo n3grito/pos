@@ -44,7 +44,7 @@ class CashRegisterController extends Controller
             return response()->json(['message' => 'Cash register created successfully.'], 201);
         }
 
-        session()->flash('success', 'Cash register created successfully.');
+        toast('Cash register created successfully.', 'success');
         return redirect()->route('cash-registers.index');
     }
 
@@ -73,7 +73,7 @@ class CashRegisterController extends Controller
             return response()->json(['message' => 'Cash register updated successfully.']);
         }
 
-        session()->flash('success', 'Cash register updated successfully.');
+        toast('Cash register updated successfully.', 'success');
         return redirect()->route('cash-registers.index');
     }
 
@@ -85,7 +85,7 @@ class CashRegisterController extends Controller
             return response()->json(['message' => 'Cash register deleted successfully.']);
         }
 
-        session()->flash('success', 'Cash register deleted successfully.');
+        toast('Cash register deleted successfully.', 'success');
         return redirect()->route('cash-registers.index');
     }
 }

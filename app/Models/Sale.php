@@ -8,7 +8,7 @@ class Sale extends Model
 {
     protected $fillable = [
         'invoice_number', 'user_id', 'client_id', 'branch_id', 'warehouse_id',
-        'cash_register_session_id', 'subtotal', 'tax', 'total',
+        'cash_register_session_id', 'price_list_id', 'subtotal', 'tax', 'total',
         'amount_paid', 'change', 'payment_reference',
         'client_name', 'client_nit',
         'payment_method', 'status', 'date',
@@ -54,5 +54,10 @@ class Sale extends Model
     public function details()
     {
         return $this->hasMany(SaleDetail::class);
+    }
+
+    public function priceList()
+    {
+        return $this->belongsTo(PriceList::class);
     }
 }

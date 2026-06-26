@@ -137,7 +137,7 @@ class InventoryController extends Controller
             ]);
         });
 
-        session()->flash('success', 'Inventario ajustado correctamente.');
+        toast('Inventario ajustado correctamente.', 'success');
         return redirect()->route('inventory.index');
     }
 
@@ -173,7 +173,7 @@ class InventoryController extends Controller
             ]);
         }
 
-        session()->flash('success', __('Producto :status.', ['status' => $status]));
+        toast(__('Producto :status.', ['status' => $status]), 'success');
         return redirect()->back();
     }
 }

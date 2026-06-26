@@ -68,7 +68,7 @@ class UserController extends Controller
         $user->syncRoles($roles);
         $user->syncPermissions($validated['permissions'] ?? []);
 
-        session()->flash('success', 'Usuario creado exitosamente.');
+        toast('Usuario creado exitosamente.', 'success');
         return redirect()->route('users.index');
     }
 
@@ -121,20 +121,20 @@ class UserController extends Controller
         $user->syncRoles($roles);
         $user->syncPermissions($validated['permissions'] ?? []);
 
-        session()->flash('success', 'Usuario actualizado exitosamente.');
+        toast('Usuario actualizado exitosamente.', 'success');
         return redirect()->route('users.index');
     }
 
     public function destroy(User $user)
     {
         if ($user->id === auth()->id()) {
-            session()->flash('error', 'No puedes eliminar tu propio usuario.');
+            toast('No puedes eliminar tu propio usuario.', 'error', true);
             return redirect()->route('users.index');
         }
 
         $user->delete();
 
-        session()->flash('success', 'Usuario eliminado exitosamente.');
+        toast('Usuario eliminado exitosamente.', 'success');
         return redirect()->route('users.index');
     }
 }

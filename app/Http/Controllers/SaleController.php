@@ -6,6 +6,7 @@ use App\Models\Branch;
 use App\Models\CashRegisterSession;
 use App\Models\Client;
 use App\Models\InventoryMovement;
+use App\Models\PriceList;
 use App\Models\Product;
 use App\Models\Sale;
 use App\Models\SaleDetail;
@@ -18,7 +19,7 @@ class SaleController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('can:sale.view-any')->only('index');
+        $this->middleware('can:sale.view-any')->only(['index', 'kanban']);
         $this->middleware('can:sale.view')->only(['show', 'thermal']);
         $this->middleware('can:sale.create')->only(['create', 'store']);
         $this->middleware('can:sale.cancel')->only('cancel');
@@ -39,6 +40,25 @@ class SaleController extends Controller
         $sales = $query->latest()->paginate(10);
 
         return view('sales.index', compact('sales'));
+    }
+
+    public function kanban(Request $request)
+    {
+        $query = Sale::with(['user', 'client', 'warehouse', 'priceList']);
+
+        if ($request->filled('from')) {
+            $query->whereDate('date', '>=', $request->from);
+        }
+
+        if ($request->filled('to')) {
+            $query->whereDate('date', '<=', $request->to);
+        }
+
+        $sales = $query->latest()->get();
+        $completed = $sales->where('status', 'completed');
+        $cancelled = $sales->where('status', 'cancelled');
+
+        return view('sales.kanban', compact('completed', 'cancelled'));
     }
 
     public function create()
@@ -86,7 +106,8 @@ class SaleController extends Controller
             ]);
         }
 
-        return view('sales.create', compact('products', 'clients', 'sessions', 'services', 'items'));
+        $priceLists = PriceList::all();
+        return view('sales.create', compact('products', 'clients', 'sessions', 'services', 'items', 'priceLists'));
     }
 
     public function store(Request $request)
@@ -204,6 +225,7 @@ class SaleController extends Controller
                     'branch_id' => $branchId,
                     'warehouse_id' => $user->warehouse_id,
                     'cash_register_session_id' => $validated['cash_register_session_id'] ?? null,
+                    'price_list_id' => $request->price_list_id,
                     'subtotal' => 0,
                     'tax' => 0,
                     'total' => 0,
@@ -325,7 +347,7 @@ class SaleController extends Controller
                 return response()->json(['message' => 'Sale created successfully.', 'sale' => $sale], 201);
             }
 
-            session()->flash('success', 'Venta creada exitosamente.');
+            toast('Venta creada exitosamente.', 'success');
             return redirect()->route('sales.show', $sale);
         } catch (ValidationException $e) {
             if ($request->wantsJson()) {
@@ -337,7 +359,7 @@ class SaleController extends Controller
                 return response()->json(['message' => 'Failed to create sale.', 'error' => $e->getMessage()], 500);
             }
 
-            session()->flash('error', 'Error al crear la venta. ' . $e->getMessage());
+            toast('Error al crear la venta. ' . $e->getMessage(), 'error', true);
             return redirect()->back()->withInput();
         }
     }
@@ -362,7 +384,7 @@ class SaleController extends Controller
             if ($request->wantsJson()) {
                 return response()->json(['message' => 'Sale is already cancelled.'], 400);
             }
-            session()->flash('error', 'La venta ya está cancelada.');
+            toast('La venta ya está cancelada.', 'error', true);
             return redirect()->back();
         }
 
@@ -411,14 +433,14 @@ class SaleController extends Controller
                 return response()->json(['message' => 'Sale cancelled successfully.']);
             }
 
-            session()->flash('success', 'Venta cancelada exitosamente.');
+            toast('Venta cancelada exitosamente.', 'success');
             return redirect()->route('sales.index');
         } catch (\Exception $e) {
             if ($request->wantsJson()) {
                 return response()->json(['message' => 'Failed to cancel sale.', 'error' => $e->getMessage()], 500);
             }
 
-            session()->flash('error', 'Error al cancelar la venta. ' . $e->getMessage());
+            toast('Error al cancelar la venta. ' . $e->getMessage(), 'error', true);
             return redirect()->back();
         }
     }

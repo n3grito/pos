@@ -9,7 +9,7 @@ class DatabaseExplorerController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('can:admin');
+        $this->middleware('can:database.explorer');
     }
 
     public function index()

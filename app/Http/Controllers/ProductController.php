@@ -19,6 +19,8 @@ class ProductController extends Controller
         $this->middleware('can:product.create')->only(['create', 'store']);
         $this->middleware('can:product.update')->only(['edit', 'update']);
         $this->middleware('can:product.delete')->only('destroy');
+        $this->middleware('can:product.export')->only('export');
+        $this->middleware('can:product.import')->only('import');
     }
 
     public function index(Request $request)
@@ -88,7 +90,7 @@ class ProductController extends Controller
             return response()->json(['message' => 'Product created successfully.'], 201);
         }
 
-        session()->flash('success', 'Product created successfully.');
+        toast('Product created successfully.', 'success');
         return redirect()->route('products.index');
     }
 
@@ -136,7 +138,7 @@ class ProductController extends Controller
             return response()->json(['message' => 'Product updated successfully.']);
         }
 
-        session()->flash('success', 'Product updated successfully.');
+        toast('Product updated successfully.', 'success');
         return redirect()->route('products.index');
     }
 
@@ -162,7 +164,7 @@ class ProductController extends Controller
             $message .= ' Errores: ' . implode(' | ', array_slice($result['errors'], 0, 5));
         }
 
-        session()->flash('success', $message);
+        toast($message, 'success');
         return redirect()->route('products.index');
     }
 
@@ -174,7 +176,7 @@ class ProductController extends Controller
             return response()->json(['message' => 'Product deleted successfully.']);
         }
 
-        session()->flash('success', 'Product deleted successfully.');
+        toast('Product deleted successfully.', 'success');
         return redirect()->route('products.index');
     }
 }

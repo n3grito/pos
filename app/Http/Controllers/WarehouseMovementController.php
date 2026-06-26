@@ -90,10 +90,10 @@ class WarehouseMovementController extends Controller
                 }
             });
 
-            session()->flash('success', 'Transferencia a inventario realizada correctamente.');
+            toast('Transferencia a inventario realizada correctamente.', 'success');
             return redirect()->route('inventory.movements');
         } catch (\Exception $e) {
-            session()->flash('error', 'Error en la transferencia: ' . $e->getMessage());
+            toast('Error en la transferencia: ' . $e->getMessage(), 'error', true);
             return back()->withInput();
         }
     }

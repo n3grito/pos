@@ -7,9 +7,6 @@
 
     <div class="py-6">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
-            @if(session('success'))
-                <div class="p-4 bg-green-100 dark:bg-green-900/50 text-green-800 dark:text-green-200 rounded-lg">{{ session('success') }}</div>
-            @endif
 
             @if(session('sql'))
                 <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-4">

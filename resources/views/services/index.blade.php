@@ -1,9 +1,7 @@
 <x-app-layout>
     <x-slot name="header">{{ __('Servicios') }}</x-slot>
     <x-content-wrapper>
-        @if (session('success'))
-            <div class="mb-4 px-4 py-3 bg-green-50 dark:bg-green-900/50 border border-green-200 dark:border-green-800 text-green-700 dark:text-green-400 rounded-lg">{{ session('success') }}</div>
-        @endif
+
         <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl">
             <div class="p-6 border-b border-gray-100 dark:border-gray-700 flex items-center justify-between">
                 <h3 class="text-lg font-semibold text-gray-700 dark:text-gray-300">{{ __('Lista de Servicios') }}</h3>

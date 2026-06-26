@@ -1,3 +1,5 @@
+<x-locale-switcher />
+
 @auth
     <x-dropdown align="right" width="48">
         <x-slot name="trigger">

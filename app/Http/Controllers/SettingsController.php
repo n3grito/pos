@@ -80,7 +80,8 @@ class SettingsController extends Controller
 
         MailSetting::updateOrCreate(['id' => 1], $data);
 
-        return back()->with('success', 'Configuración de correo guardada correctamente.');
+        toast('Configuración de correo guardada correctamente.', 'success');
+        return back();
     }
 
     public function receipt()
@@ -102,7 +103,8 @@ class SettingsController extends Controller
 
         ReceiptSetting::updateOrCreate(['id' => 1], $validated);
 
-        return back()->with('success', 'Configuración de recibo guardada correctamente.');
+        toast('Configuración de recibo guardada correctamente.', 'success');
+        return back();
     }
 
     public function general()
@@ -137,7 +139,8 @@ class SettingsController extends Controller
 
         ReceiptSetting::updateOrCreate(['id' => 1], $validated);
 
-        return back()->with('success', 'Configuración general guardada correctamente.');
+        toast('Configuración general guardada correctamente.', 'success');
+        return back();
     }
 
     public function testMail(Request $request)
@@ -155,9 +158,11 @@ class SettingsController extends Controller
                 $message->to($email)->subject('Prueba de Configuración de Correo - POS System');
             });
 
-            return back()->with('success', 'Correo de prueba enviado exitosamente a ' . $email . '.');
+            toast('Correo de prueba enviado exitosamente a ' . $email . '.', 'success');
+            return back();
         } catch (\Exception $e) {
-            return back()->with('error', 'Error al enviar el correo de prueba: ' . $e->getMessage());
+            toast('Error al enviar el correo de prueba: ' . $e->getMessage(), 'error', true);
+            return back();
         }
     }
 }

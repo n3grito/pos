@@ -4,18 +4,15 @@
 </x-slot>
 
     <x-content-wrapper>
-            @if (session('success'))
-                <div class="mb-4 px-4 py-3 bg-green-50 dark:bg-green-900/50 border border-green-200 text-green-700 dark:text-green-400 rounded-lg">
-                    {{ session('success') }}
-                </div>
-            @endif
 
             <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl">
                 <div class="p-6 flex justify-between items-center border-b border-gray-200 dark:border-gray-700">
                     <h3 class="text-lg font-semibold text-gray-700 dark:text-gray-300">{{ __('Listado de Monedas') }}</h3>
+                    @can('currency.create')
                     <a href="{{ route('currencies.create') }}" class="inline-flex items-center px-4 py-2 bg-blue-600 dark:bg-blue-500 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-blue-500 dark:hover:bg-blue-600">
                         {{ __('Nueva Moneda') }}
                     </a>
+                    @endcan
                 </div>
                 <div class="overflow-x-auto">
                     <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
@@ -37,6 +34,7 @@
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700 dark:text-gray-300">{{ $currency->symbol }}</td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">{{ number_format($currency->exchange_rate, 4) }}</td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm">
+                                        @can('currency.toggle-active')
                                         <form action="{{ route('currencies.toggle-active', $currency) }}" method="POST" class="inline">
                                             @csrf
                                             @method('PUT')
@@ -44,14 +42,19 @@
                                                 {{ $currency->is_active ? __('Activa') : __('Inactiva') }}
                                             </button>
                                         </form>
+                                        @endcan
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
+                                        @can('currency.update')
                                         <a href="{{ route('currencies.edit', $currency) }}" class="text-indigo-600 dark:text-indigo-400 hover:text-indigo-900 dark:hover:text-indigo-300">{{ __('Editar') }}</a>
+                                        @endcan
+                                        @can('currency.delete')
                                         <form action="{{ route('currencies.destroy', $currency) }}" method="POST" class="inline" onsubmit="return confirm('{{ __('¿Está seguro de eliminar esta moneda?') }}')">
                                             @csrf
                                             @method('DELETE')
                                             <button type="submit" class="text-red-600 dark:text-red-400 hover:text-red-900 dark:hover:text-red-300">{{ __('Eliminar') }}</button>
                                         </form>
+                                        @endcan
                                     </td>
                                 </tr>
                             @empty

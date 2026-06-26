@@ -42,7 +42,7 @@ class CurrencyController extends Controller
             return response()->json(['message' => 'Moneda creada correctamente.'], 201);
         }
 
-        session()->flash('success', 'Moneda creada correctamente.');
+        toast('Moneda creada correctamente.', 'success');
         return redirect()->route('currencies.index');
     }
 
@@ -66,7 +66,7 @@ class CurrencyController extends Controller
             return response()->json(['message' => 'Moneda actualizada correctamente.']);
         }
 
-        session()->flash('success', 'Moneda actualizada correctamente.');
+        toast('Moneda actualizada correctamente.', 'success');
         return redirect()->route('currencies.index');
     }
 
@@ -78,7 +78,7 @@ class CurrencyController extends Controller
             return response()->json(['message' => 'Estado de moneda actualizado.']);
         }
 
-        session()->flash('success', 'Estado de moneda actualizado.');
+        toast('Estado de moneda actualizado.', 'success');
         return redirect()->route('currencies.index');
     }
 
@@ -90,7 +90,7 @@ class CurrencyController extends Controller
             return response()->json(['message' => 'Moneda eliminada correctamente.']);
         }
 
-        session()->flash('success', 'Moneda eliminada correctamente.');
+        toast('Moneda eliminada correctamente.', 'success');
         return redirect()->route('currencies.index');
     }
 }

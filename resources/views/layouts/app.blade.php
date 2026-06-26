@@ -88,6 +88,8 @@
             </main>
         </div>
 
+        <x-toast-notifications />
+
         @stack('scripts')
         <script>
             if ('serviceWorker' in navigator) {

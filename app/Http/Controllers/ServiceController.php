@@ -18,6 +18,8 @@ class ServiceController extends Controller
         $this->middleware('can:service.create')->only(['create', 'store']);
         $this->middleware('can:service.update')->only(['edit', 'update']);
         $this->middleware('can:service.delete')->only('destroy');
+        $this->middleware('can:service.export')->only('export');
+        $this->middleware('can:service.import')->only('import');
     }
 
     public function index()
@@ -64,7 +66,7 @@ class ServiceController extends Controller
         }
         $service->products()->sync($pivotData);
 
-        session()->flash('success', 'Servicio creado correctamente.');
+        toast('Servicio creado correctamente.', 'success');
         return redirect()->route('services.index');
     }
 
@@ -113,7 +115,7 @@ class ServiceController extends Controller
         }
         $service->products()->sync($pivotData);
 
-        session()->flash('success', 'Servicio actualizado correctamente.');
+        toast('Servicio actualizado correctamente.', 'success');
         return redirect()->route('services.index');
     }
 
@@ -139,14 +141,14 @@ class ServiceController extends Controller
             $message .= ' Errores: ' . implode(' | ', array_slice($result['errors'], 0, 5));
         }
 
-        session()->flash('success', $message);
+        toast($message, 'success');
         return redirect()->route('services.index');
     }
 
     public function destroy(Service $service)
     {
         $service->delete();
-        session()->flash('success', 'Servicio eliminado correctamente.');
+        toast('Servicio eliminado correctamente.', 'success');
         return redirect()->route('services.index');
     }
 }

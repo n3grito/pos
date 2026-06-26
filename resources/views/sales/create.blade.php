@@ -55,6 +55,15 @@
 
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                                 <div>
+                                    <x-input-label for="price_list_id" :value="__('Lista de Precio')" />
+                                    <select id="price_list_id" name="price_list_id" class="block mt-1 w-full border-gray-300 dark:border-gray-600 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm">
+                                        <option value="">{{ __('Precio Base') }}</option>
+                                        @foreach ($priceLists as $priceList)
+                                            <option value="{{ $priceList->id }}" {{ old('price_list_id') == $priceList->id ? 'selected' : '' }}>{{ $priceList->name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div>
                                     <x-input-label for="client_id" :value="__('Cliente')" />
                                     <select id="client_id" name="client_id" class="block mt-1 w-full border-gray-300 dark:border-gray-600 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm">
                                         <option value="">{{ __('Cliente General') }}</option>

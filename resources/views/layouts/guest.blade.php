@@ -66,6 +66,8 @@
             </button>
         </div>
 
+        <x-toast-notifications />
+
         <div x-data="{ show: !localStorage.getItem('cookie_consent') }" x-show="show" x-cloak class="fixed bottom-0 left-0 right-0 z-50 bg-gray-900 dark:bg-gray-950 text-white px-4 py-3 flex items-center justify-between gap-4 text-sm">
             <p class="text-gray-300">{{ __('Este sitio utiliza cookies esenciales para su funcionamiento.') }} <a href="{{ route('privacy') }}" class="text-blue-400 hover:underline">{{ __('Más información') }}</a></p>
             <button @click="localStorage.setItem('cookie_consent', '1'); show = false" class="shrink-0 px-4 py-1.5 bg-blue-600 hover:bg-blue-500 text-white font-medium rounded-lg transition-colors">{{ __('Aceptar') }}</button>

@@ -44,7 +44,7 @@ class SupplierController extends Controller
             return response()->json(['message' => 'Supplier created successfully.'], 201);
         }
 
-        session()->flash('success', 'Supplier created successfully.');
+        toast('Supplier created successfully.', 'success');
         return redirect()->route('suppliers.index');
     }
 
@@ -74,7 +74,7 @@ class SupplierController extends Controller
             return response()->json(['message' => 'Supplier updated successfully.']);
         }
 
-        session()->flash('success', 'Supplier updated successfully.');
+        toast('Supplier updated successfully.', 'success');
         return redirect()->route('suppliers.index');
     }
 
@@ -86,7 +86,7 @@ class SupplierController extends Controller
             return response()->json(['message' => 'Supplier deleted successfully.']);
         }
 
-        session()->flash('success', 'Supplier deleted successfully.');
+        toast('Supplier deleted successfully.', 'success');
         return redirect()->route('suppliers.index');
     }
 }

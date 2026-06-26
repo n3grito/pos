@@ -16,7 +16,7 @@ class PurchaseController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('can:purchase.view-any')->only('index');
+        $this->middleware('can:purchase.view-any')->only(['index', 'kanban']);
         $this->middleware('can:purchase.view')->only('show');
         $this->middleware('can:purchase.create')->only(['create', 'store']);
         $this->middleware('can:purchase.update')->only(['edit', 'update']);
@@ -35,6 +35,22 @@ class PurchaseController extends Controller
         $purchases = $query->latest()->paginate(10);
 
         return view('purchases.index', compact('purchases'));
+    }
+
+    public function kanban(Request $request)
+    {
+        $query = Purchase::with(['supplier', 'user', 'warehouse']);
+
+        if ($search = $request->get('search')) {
+            $query->where('invoice_number', 'like', "%{$search}%");
+        }
+
+        $purchases = $query->latest()->get();
+        $pending = $purchases->where('status', 'pending');
+        $completed = $purchases->where('status', 'completed');
+        $cancelled = $purchases->where('status', 'cancelled');
+
+        return view('purchases.kanban', compact('pending', 'completed', 'cancelled'));
     }
 
     public function create()
@@ -121,14 +137,14 @@ class PurchaseController extends Controller
                 return response()->json(['message' => 'Purchase created successfully.', 'purchase' => $purchase], 201);
             }
 
-            session()->flash('success', 'Compra registrada correctamente.');
+            toast('Compra registrada correctamente.', 'success');
             return redirect()->route('purchases.show', $purchase);
         } catch (\Exception $e) {
             if ($request->wantsJson()) {
                 return response()->json(['message' => 'Failed to create purchase.', 'error' => $e->getMessage()], 500);
             }
 
-            session()->flash('error', 'Error al registrar la compra. ' . $e->getMessage());
+            toast('Error al registrar la compra. ' . $e->getMessage(), 'error', true);
             return redirect()->back()->withInput();
         }
     }
@@ -151,7 +167,7 @@ class PurchaseController extends Controller
             if ($request->wantsJson()) {
                 return response()->json(['message' => 'Purchase is already cancelled.'], 400);
             }
-            session()->flash('error', 'La compra ya está cancelada.');
+            toast('La compra ya está cancelada.', 'error', true);
             return redirect()->back();
         }
 
@@ -183,14 +199,14 @@ class PurchaseController extends Controller
                 return response()->json(['message' => 'Purchase cancelled successfully.']);
             }
 
-            session()->flash('success', 'Compra cancelada correctamente.');
+            toast('Compra cancelada correctamente.', 'success');
             return redirect()->route('purchases.index');
         } catch (\Exception $e) {
             if ($request->wantsJson()) {
                 return response()->json(['message' => 'Failed to cancel purchase.', 'error' => $e->getMessage()], 500);
             }
 
-            session()->flash('error', 'Error al cancelar la compra. ' . $e->getMessage());
+            toast('Error al cancelar la compra. ' . $e->getMessage(), 'error', true);
             return redirect()->back();
         }
     }
