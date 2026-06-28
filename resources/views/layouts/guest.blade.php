@@ -24,7 +24,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
-        <script>(function(){var m=localStorage.getItem('darkMode')||'system';if(m==='dark'||(m==='system'&&window.matchMedia('(prefers-color-scheme:dark)').matches))document.documentElement.classList.add('dark')})()</script>
+        <script nonce="{{ $cspNonce ?? '' }}">(function(){var m=localStorage.getItem('darkMode')||'system';if(m==='dark'||(m==='system'&&window.matchMedia('(prefers-color-scheme:dark)').matches))document.documentElement.classList.add('dark')})()</script>
 
         <title>{{ config('app.name') }}</title>
 

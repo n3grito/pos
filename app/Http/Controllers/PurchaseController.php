@@ -114,10 +114,15 @@ class PurchaseController extends Controller
                         'subtotal' => $lineSubtotal,
                     ]);
 
-                    WarehouseStock::updateOrCreate(
+                    $stock = WarehouseStock::updateOrCreate(
                         ['warehouse_id' => $validated['warehouse_id'], 'product_id' => $detail['product_id']],
-                        ['quantity' => DB::raw('quantity + ' . $detail['quantity'])]
+                        ['quantity' => $detail['quantity']]
                     );
+                    if (!$stock->wasRecentlyCreated) {
+                        $stock->increment('quantity', $detail['quantity']);
+                    }
+
+                    Product::where('id', $detail['product_id'])->increment('stock', $detail['quantity']);
 
                     InventoryMovement::create([
                         'product_id' => $detail['product_id'],

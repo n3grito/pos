@@ -24,7 +24,7 @@
 
             <div class="p-6 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl">
                 <div class="max-w-xl">
-                    @php $twoFactorEnabled = \App\Models\GeneralSetting::get('2fa_enabled', '0') === '1'; @endphp
+                    @php $twoFactorEnabled = (bool) \App\Models\GeneralSetting::get('2fa_enabled', false); @endphp
                     @if($twoFactorEnabled)
                     <section>
                         <header>

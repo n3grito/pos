@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Branch;
+use App\Models\GeneralSetting;
 use App\Models\User;
 use App\Models\Warehouse;
 use Illuminate\Http\Request;
@@ -127,6 +128,15 @@ class UserController extends Controller
 
         if ($validated['password']) {
             $user->password = Hash::make($validated['password']);
+        }
+
+        if (GeneralSetting::get('2fa_enabled', false)) {
+            $twoFactorEnabled = $request->boolean('two_factor_enabled');
+            $user->two_factor_enabled = $twoFactorEnabled;
+            if (!$twoFactorEnabled) {
+                $user->two_factor_code = null;
+                $user->two_factor_expires_at = null;
+            }
         }
 
         $user->save();

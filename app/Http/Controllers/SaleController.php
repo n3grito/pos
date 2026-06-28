@@ -324,7 +324,8 @@ class SaleController extends Controller
                 // If payment is cash, validate amount
                 if ($request->payment_method === 'cash' && $request->filled('amount_paid')) {
                     $amountPaid = (float) $request->amount_paid;
-                    $change = round($amountPaid - $subtotal, 2);
+                    $totalAmount = $subtotal + $totalTax;
+                    $change = round($amountPaid - $totalAmount, 2);
                     if ($change < 0) {
                         throw ValidationException::withMessages([
                             'amount_paid' => __('El monto recibido es menor que el total de la venta. Faltan $') . number_format(abs($change), 2),
@@ -391,6 +392,8 @@ class SaleController extends Controller
         try {
             DB::transaction(function () use ($sale) {
                 $sale->update(['status' => 'cancelled']);
+
+                $sale->load('details.service.products');
 
                 foreach ($sale->details as $detail) {
                     if ($detail->service) {

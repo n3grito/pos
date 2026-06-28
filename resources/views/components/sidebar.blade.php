@@ -339,6 +339,4 @@
         </div>
         @endcanany
     </div>
-
-    </div>
 </nav>

@@ -93,7 +93,7 @@
     </x-content-wrapper>
 
     @push('scripts')
-    <script>
+    <script nonce="{{ $cspNonce }}">
         let rowIdx = {{ max($service->products->count(), 1) }};
         document.getElementById('addProductRow').addEventListener('click', function () {
             const container = document.getElementById('productsContainer');

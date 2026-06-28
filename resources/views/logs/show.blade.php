@@ -13,8 +13,8 @@
                 <form method="GET" class="flex flex-wrap items-end gap-4">
                     <input type="hidden" name="page" value="1">
                     <div>
-                        <label class="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">Nivel</label>
-                        <select name="level" class="rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 text-sm">
+                        <label for="log_level" class="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">Nivel</label>
+                        <select id="log_level" name="level" class="rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 text-sm">
                             <option value="">Todos</option>
                             @foreach($levels as $lvl)
                                 <option value="{{ $lvl }}" {{ $level === $lvl ? 'selected' : '' }}>{{ $lvl }}</option>
@@ -22,8 +22,8 @@
                         </select>
                     </div>
                     <div>
-                        <label class="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">Buscar</label>
-                        <input type="text" name="search" value="{{ $search }}" placeholder="Texto..." class="rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 text-sm">
+                        <label for="log_search" class="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">Buscar</label>
+                        <input id="log_search" type="text" name="search" value="{{ $search }}" placeholder="Texto..." class="rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 text-sm">
                     </div>
                     <button type="submit" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm rounded-md transition-colors">Filtrar</button>
                     @if($level || $search)

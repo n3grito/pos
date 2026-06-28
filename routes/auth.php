@@ -60,5 +60,6 @@ Route::middleware('auth')->group(function () {
     Route::put('password', [PasswordController::class, 'update'])->name('password.update')->middleware('throttle:sensitive');
 
     Route::match(['GET', 'POST'], 'logout', [AuthenticatedSessionController::class, 'destroy'])
-        ->name('logout');
+        ->name('logout')
+        ->middleware('throttle:sensitive');
 });

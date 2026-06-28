@@ -104,7 +104,7 @@
 
     @push('scripts')
     @php $productsData = $products->map(fn($p) => ['id' => $p->id, 'name' => $p->name, 'sku' => $p->sku, 'cost_price' => $p->cost_price])->values(); @endphp
-    <script>
+    <script nonce="{{ $cspNonce }}">
         const productsList = @json($productsData);
 
         function productOptionsHtml() {

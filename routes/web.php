@@ -42,17 +42,17 @@ Route::get('storage/{path}', function (string $path) {
 
 Route::post('/csp-report', function (\Illuminate\Http\Request $request) {
     $report = $request->all();
+    $blockedUri = strip_tags(substr($report['csp-report']['blocked-uri'] ?? 'desconocida', 0, 255));
     \App\Models\ActivityLog::create([
         'action' => 'csp_violation',
         'severity' => 'warning',
-        'notable' => true,
-        'description' => 'Violación CSP: ' . ($report['csp-report']['blocked-uri'] ?? 'desconocida'),
+        'notable' => false,
+        'description' => 'CSP: ' . $blockedUri,
         'ip_address' => $request->ip(),
         'user_agent' => $request->userAgent(),
     ]);
-    sendErrorNotification('WARNING', 'Violación CSP detectada', json_encode($report, JSON_PRETTY_PRINT));
     return response('', 204);
-})->name('csp.report');
+})->name('csp.report')->middleware('throttle:20,1');
 
 Route::get('/locale/{locale}', function (string $locale) {
     if (in_array($locale, config('app.available_locales', []), true)) {

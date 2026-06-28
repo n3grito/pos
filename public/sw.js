@@ -1,9 +1,10 @@
 const CACHE = 'pos-cache-v1';
-const STATIC_ASSETS = ['/', '/offline'];
 
 self.addEventListener('install', event => {
     event.waitUntil(
-        caches.open(CACHE).then(cache => cache.addAll(STATIC_ASSETS))
+        caches.open(CACHE).then(cache =>
+            cache.add('/').catch(() => {})
+        )
     );
     self.skipWaiting();
 });

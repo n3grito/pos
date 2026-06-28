@@ -85,8 +85,8 @@
                             </div>
                         </div>
 
-                        <div class="mt-6">
-                            <x-input-label :value="__('Roles')" />
+                        <fieldset class="mt-6">
+                            <legend class="block font-medium text-sm text-gray-700 dark:text-gray-300">{{ __('Roles') }}</legend>
                             <div class="mt-2 grid grid-cols-1 md:grid-cols-3 gap-4">
                                 @foreach ($roles as $role)
                                     <label class="inline-flex items-center">
@@ -96,7 +96,7 @@
                                 @endforeach
                             </div>
                             <x-input-error :messages="$errors->get('roles')" class="mt-2" />
-                        </div>
+                        </fieldset>
 
                         <div class="mt-6" x-data="{ showPermissions: false }">
                             <button type="button" @click="showPermissions = !showPermissions" class="text-sm text-blue-600 dark:text-blue-400 hover:underline flex items-center gap-1">

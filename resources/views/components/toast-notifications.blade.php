@@ -1,4 +1,10 @@
-<div x-data="toastManager()" x-init="init()" class="fixed top-4 right-4 z-[100] flex flex-col gap-2 w-80 pointer-events-none">
+<div x-data="toastManager()"
+     data-session-toasts='@json(session('toasts', []))'
+     data-session-success="{{ session('success') }}"
+     data-session-error="{{ session('error') }}"
+     data-session-warning="{{ session('warning') }}"
+     data-session-info="{{ session('info') }}"
+     class="fixed top-4 right-4 z-[100] flex flex-col gap-2 w-80 pointer-events-none">
     <template x-for="(toast, index) in toasts" :key="index">
         <div x-show="toast.visible" x-transition:enter="transform ease-out duration-300" x-transition:enter-start="translate-x-full opacity-0" x-transition:enter-end="translate-x-0 opacity-100" x-transition:leave="transform ease-in duration-200" x-transition:leave-start="translate-x-0 opacity-100" x-transition:leave-end="translate-x-full opacity-0" class="pointer-events-auto rounded-xl shadow-lg px-4 py-3 text-sm font-medium border flex items-start gap-3"
             :class="{
@@ -14,51 +20,3 @@
         </div>
     </template>
 </div>
-
-<script>
-    function toastManager() {
-        return {
-            toasts: [],
-            init() {
-                this.loadFromSession();
-                document.addEventListener('livewire:navigated', () => this.loadFromSession());
-            },
-            loadFromSession() {
-                @if(session()->has('toasts'))
-                    @foreach(session('toasts') as $toast)
-                        this.addToast(@json($toast['message']), @json($toast['type']), @json($toast['persistent'] ?? false));
-                    @endforeach
-                @endif
-                @if(session('success'))
-                    this.addToast(@json(session('success')), 'success');
-                @endif
-                @if(session('error'))
-                    this.addToast(@json(session('error')), 'error');
-                @endif
-                @if(session('warning'))
-                    this.addToast(@json(session('warning')), 'warning');
-                @endif
-                @if(session('info'))
-                    this.addToast(@json(session('info')), 'info');
-                @endif
-            },
-            addToast(message, type = 'success', persistent = false) {
-                const toast = { message, type, visible: true };
-                this.toasts.push(toast);
-                if (!persistent) {
-                    setTimeout(() => this.removeToast(this.toasts.indexOf(toast)), 5000);
-                }
-            },
-            showAlert(message, severity) {
-                const type = severity === 'critical' ? 'error' : severity === 'warning' ? 'warning' : 'info';
-                this.addToast(message, type, false);
-            },
-            removeToast(index) {
-                if (this.toasts[index]) {
-                    this.toasts[index].visible = false;
-                    setTimeout(() => { this.toasts.splice(index, 1); }, 300);
-                }
-            }
-        }
-    }
-</script>

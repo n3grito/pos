@@ -169,7 +169,7 @@
     </x-content-wrapper>
 
     @push('scripts')
-    <script>
+    <script nonce="{{ $cspNonce }}">
         let cart = [];
 
         document.getElementById('itemSearch').addEventListener('input', function() {

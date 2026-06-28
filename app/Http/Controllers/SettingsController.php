@@ -110,7 +110,7 @@ class SettingsController extends Controller
     public function general()
     {
         $registrationEnabled = GeneralSetting::get('registration_enabled', '1') === '1';
-        $twoFactorEnabled = GeneralSetting::get('2fa_enabled', '0') === '1';
+        $twoFactorEnabled = GeneralSetting::get('2fa_enabled', false);
         $welcomeContent = GeneralSetting::get('welcome_content', '');
         $receipt = ReceiptSetting::firstOrNew([]);
 

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\CashRegister;
 use App\Models\CashRegisterSession;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class CashRegisterSessionController extends Controller
 {
@@ -24,38 +25,45 @@ class CashRegisterSessionController extends Controller
 
     public function open(Request $request, CashRegister $cashRegister)
     {
-        $existingOpen = CashRegisterSession::where('cash_register_id', $cashRegister->id)
-            ->where('status', 'open')
-            ->first();
-
-        if ($existingOpen) {
-            if ($request->wantsJson()) {
-                return response()->json(['message' => 'This cash register already has an open session.'], 400);
-            }
-            toast('This cash register already has an open session.', 'error', true);
-            return redirect()->back();
-        }
-
         $validated = $request->validate([
             'opening_balance' => 'required|numeric|min:0',
             'notes' => 'nullable|string',
         ]);
 
-        $session = CashRegisterSession::create([
-            'cash_register_id' => $cashRegister->id,
-            'user_id' => auth()->id(),
-            'opening_balance' => $validated['opening_balance'],
-            'opening_date' => now(),
-            'status' => 'open',
-            'notes' => $validated['notes'] ?? null,
-        ]);
+        try {
+            $session = DB::transaction(function () use ($cashRegister, $validated) {
+                $existingOpen = CashRegisterSession::where('cash_register_id', $cashRegister->id)
+                    ->where('status', 'open')
+                    ->lockForUpdate()
+                    ->first();
 
-        if ($request->wantsJson()) {
-            return response()->json(['message' => 'Session opened successfully.', 'session' => $session], 201);
+                if ($existingOpen) {
+                    throw new \RuntimeException('Esta caja registradora ya tiene una sesión abierta.');
+                }
+
+                return CashRegisterSession::create([
+                    'cash_register_id' => $cashRegister->id,
+                    'user_id' => auth()->id(),
+                    'opening_balance' => $validated['opening_balance'],
+                    'opening_date' => now(),
+                    'status' => 'open',
+                    'notes' => $validated['notes'] ?? null,
+                ]);
+            });
+
+            if ($request->wantsJson()) {
+                return response()->json(['message' => 'Session opened successfully.', 'session' => $session], 201);
+            }
+
+            toast('Sesión abierta correctamente.', 'success');
+            return redirect()->route('cash-register-sessions.index');
+        } catch (\RuntimeException $e) {
+            if ($request->wantsJson()) {
+                return response()->json(['message' => $e->getMessage()], 400);
+            }
+            toast($e->getMessage(), 'error', true);
+            return redirect()->back();
         }
-
-        toast('Session opened successfully.', 'success');
-        return redirect()->route('cash-register-sessions.index');
     }
 
     public function close(Request $request, CashRegisterSession $cashRegisterSession)

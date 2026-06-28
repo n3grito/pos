@@ -34,6 +34,9 @@
                                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">{{ __('Sucursal') }}</th>
                                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">{{ __('Almacén') }}</th>
                                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">{{ __('Estado') }}</th>
+                                @if(\App\Models\GeneralSetting::get('2fa_enabled', false))
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">{{ __('2FA') }}</th>
+                                @endif
                                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">{{ __('Acciones') }}</th>
                             </tr>
                         </thead>
@@ -56,6 +59,13 @@
                                             {{ $user->is_active ? __('Activo') : __('Inactivo') }}
                                         </span>
                                     </td>
+                                    @if(\App\Models\GeneralSetting::get('2fa_enabled', false))
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm">
+                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full {{ $user->two_factor_enabled ? 'bg-green-100 dark:bg-green-900/50 text-green-800 dark:text-green-200' : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400' }}">
+                                            {{ $user->two_factor_enabled ? __('Activo') : __('Inactivo') }}
+                                        </span>
+                                    </td>
+                                    @endif
                                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
                                         @can('user.view')
                                         <a href="{{ route('users.show', $user) }}" class="text-blue-600 dark:text-blue-400 hover:text-blue-900 dark:hover:text-blue-300">{{ __('Ver') }}</a>
@@ -74,7 +84,7 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="7" class="px-6 py-4 text-center text-sm text-gray-500 dark:text-gray-400">{{ __('No hay usuarios registrados') }}</td>
+                                    <td colspan="{{ \App\Models\GeneralSetting::get('2fa_enabled', false) ? 8 : 7 }}" class="px-6 py-4 text-center text-sm text-gray-500 dark:text-gray-400">{{ __('No hay usuarios registrados') }}</td>
                                 </tr>
                             @endforelse
                         </tbody>

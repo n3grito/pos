@@ -32,6 +32,12 @@ class TwoFactorController extends Controller
             return redirect()->intended(route('dashboard'));
         }
 
+        if (!session('two_factor_code_sent')) {
+            $this->generateAndSendCode(auth()->user());
+            session(['two_factor_code_sent' => true]);
+            session()->flash('status', 'Código enviado a tu correo electrónico.');
+        }
+
         return view('auth.two-factor');
     }
 
@@ -46,14 +52,7 @@ class TwoFactorController extends Controller
         }
         RateLimiter::hit($key, 60);
 
-        $code = str_pad((string) random_int(0, 999999), 6, '0', STR_PAD_LEFT);
-
-        $user->forceFill([
-            'two_factor_code' => bcrypt($code),
-            'two_factor_expires_at' => now()->addMinutes(10),
-        ])->save();
-
-        $this->sendMail($user, $code);
+        $this->generateAndSendCode($user);
 
         session(['two_factor_code_sent' => true]);
 
@@ -97,8 +96,12 @@ class TwoFactorController extends Controller
         $user = auth()->user();
         $user->forceFill(['two_factor_enabled' => true])->save();
 
-        toast('Autenticación de dos factores activada.', 'success');
-        return redirect()->route('profile.edit');
+        session()->forget(['two_factor_verified', 'two_factor_verified_at', 'two_factor_code_sent']);
+
+        $this->generateAndSendCode($user);
+        session(['two_factor_code_sent' => true]);
+
+        return redirect()->route('two-factor.show');
     }
 
     public function disable()
@@ -114,6 +117,18 @@ class TwoFactorController extends Controller
 
         toast('Autenticación de dos factores desactivada.', 'success');
         return redirect()->route('profile.edit');
+    }
+
+    protected function generateAndSendCode($user): void
+    {
+        $code = str_pad((string) random_int(0, 999999), 6, '0', STR_PAD_LEFT);
+
+        $user->forceFill([
+            'two_factor_code' => bcrypt($code),
+            'two_factor_expires_at' => now()->addMinutes(10),
+        ])->save();
+
+        $this->sendMail($user, $code);
     }
 
     protected function clearCode($user): void

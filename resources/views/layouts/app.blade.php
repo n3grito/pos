@@ -24,7 +24,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
-        <script>(function(){var m=localStorage.getItem('darkMode')||'system';if(m==='dark'||(m==='system'&&window.matchMedia('(prefers-color-scheme:dark)').matches))document.documentElement.classList.add('dark')})()</script>
+        <script nonce="{{ $cspNonce ?? '' }}">(function(){var m=localStorage.getItem('darkMode')||'system';if(m==='dark'||(m==='system'&&window.matchMedia('(prefers-color-scheme:dark)').matches))document.documentElement.classList.add('dark')})()</script>
 
         <title>{{ config('app.name') }}</title>
 
@@ -46,7 +46,7 @@
         @stack('styles')
     </head>
     <body class="font-sans antialiased bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100">
-        <div class="min-h-screen" x-data="{ sidebarOpen: false }">
+        <div class="min-h-screen flex flex-col" x-data="{ sidebarOpen: false }">
             <div x-show="sidebarOpen" x-transition:enter="transition-opacity ease-linear duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="transition-opacity ease-linear duration-300" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" class="fixed inset-0 z-40 bg-gray-600 bg-opacity-50 dark:bg-opacity-70 lg:hidden" @click="sidebarOpen = false" style="display: none;"></div>
 
             <x-sidebar />
@@ -83,7 +83,7 @@
                 </div>
             </div>
 
-            <main class="pt-16 lg:ml-64 min-h-screen flex flex-col">
+            <main class="pt-16 lg:ml-64 flex-1 flex flex-col">
                 <div class="flex-1">
                     {{ $slot }}
                 </div>
@@ -96,11 +96,6 @@
         <x-toast-notifications />
 
         @stack('scripts')
-        <script>
-            if ('serviceWorker' in navigator) {
-                navigator.serviceWorker.register('/sw.js');
-            }
-        </script>
 
         <div x-data="{ show: !localStorage.getItem('cookie_consent') }" x-show="show" x-cloak class="fixed bottom-0 left-0 right-0 z-50 bg-gray-900 dark:bg-gray-950 text-white px-4 py-3 flex items-center justify-between gap-4 text-sm">
             <p class="text-gray-300">{{ __('Este sitio utiliza cookies esenciales para su funcionamiento.') }} <a href="{{ route('privacy') }}" class="text-blue-400 hover:underline">{{ __('Más información') }}</a></p>
@@ -108,33 +103,7 @@
         </div>
 
         @can('activity-log.view')
-        <script>
-            document.addEventListener('alpine:init', () => {
-                setInterval(function() {
-                    fetch('{{ route('activity-logs.stream') }}?since=30')
-                        .then(r => r.json())
-                        .then(data => {
-                            if (data.count > 0) {
-                                const badge = document.getElementById('sidebarAlertBadge');
-                                if (badge) badge.classList.remove('hidden');
-
-                                data.alerts.forEach(function(alert) {
-                                    const toastManager = document.querySelector('[x-data="toastManager()"]');
-                                    if (toastManager && toastManager.__x) {
-                                        toastManager.__x.$data.addToast(alert.description,
-                                            alert.severity === 'critical' ? 'error' : 'warning', false);
-                                    }
-                                });
-
-                                setTimeout(() => {
-                                    if (badge) badge.classList.add('hidden');
-                                }, 30000);
-                            }
-                        })
-                        .catch(() => {});
-                }, 15000);
-            });
-        </script>
+            <span id="activityPollerData" data-stream-url="{{ route('activity-logs.stream') }}" class="hidden"></span>
         @endcan
     </body>
 </html>

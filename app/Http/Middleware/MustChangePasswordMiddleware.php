@@ -21,29 +21,23 @@ class MustChangePasswordMiddleware
 
     public function handle(Request $request, Closure $next): Response
     {
-        $response = $next($request);
+        if (auth()->check()) {
+            /** @var \App\Models\User $user */
+            $user = auth()->user();
 
-        if (!auth()->check()) {
-            return $response;
+            if ($user->must_change_password) {
+                $routeName = $request->route()?->getName();
+
+                if (!in_array($routeName, $this->except, true)) {
+                    if ($request->isMethod('GET')) {
+                        return redirect()->route('password.change.form');
+                    }
+
+                    abort(403, 'Debes cambiar tu contraseña antes de continuar.');
+                }
+            }
         }
 
-        /** @var \App\Models\User $user */
-        $user = auth()->user();
-
-        if (!$user->must_change_password) {
-            return $response;
-        }
-
-        $routeName = $request->route()?->getName();
-
-        if (in_array($routeName, $this->except, true)) {
-            return $response;
-        }
-
-        if ($request->isMethod('GET')) {
-            return redirect()->route('password.change.form');
-        }
-
-        abort(403, 'Debes cambiar tu contraseña antes de continuar.');
+        return $next($request);
     }
 }

@@ -66,7 +66,7 @@
     </x-content-wrapper>
 
     @push('scripts')
-    <script>
+    <script nonce="{{ $cspNonce }}">
         let rowIndex = 1;
 
         document.getElementById('warehouse_id').addEventListener('change', function () {

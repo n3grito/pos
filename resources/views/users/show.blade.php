@@ -41,6 +41,16 @@
                                 @endforelse
                             </div>
                         </div>
+                        @if(\App\Models\GeneralSetting::get('2fa_enabled', false))
+                        <div>
+                            <h4 class="text-sm font-medium text-gray-500 dark:text-gray-400">{{ __('2FA') }}</h4>
+                            <p class="mt-1 text-sm">
+                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full {{ $user->two_factor_enabled ? 'bg-green-100 dark:bg-green-900/50 text-green-800 dark:text-green-200' : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400' }}">
+                                    {{ $user->two_factor_enabled ? __('Activo') : __('Inactivo') }}
+                                </span>
+                            </p>
+                        </div>
+                        @endif
                         <div>
                             <h4 class="text-sm font-medium text-gray-500 dark:text-gray-400">{{ __('Creado') }}</h4>
                             <p class="mt-1 text-sm text-gray-900 dark:text-gray-100">{{ $user->created_at->format('d/m/Y H:i') }}</p>

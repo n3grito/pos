@@ -16,8 +16,8 @@
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
             <form method="GET" class="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-4 flex flex-wrap gap-4 items-end">
                 <div>
-                    <label class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">Usuario</label>
-                    <select name="user_id" class="text-sm border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 rounded-lg">
+                    <label for="filter_user" class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">Usuario</label>
+                    <select id="filter_user" name="user_id" class="text-sm border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 rounded-lg">
                         <option value="">Todos</option>
                         @foreach($users as $user)
                             <option value="{{ $user->id }}" {{ request('user_id') == $user->id ? 'selected' : '' }}>{{ $user->name }}</option>
@@ -25,8 +25,8 @@
                     </select>
                 </div>
                 <div>
-                    <label class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">Acción</label>
-                    <select name="action" class="text-sm border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 rounded-lg">
+                    <label for="filter_action" class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">Acción</label>
+                    <select id="filter_action" name="action" class="text-sm border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 rounded-lg">
                         <option value="">Todas</option>
                         @foreach($actions as $a)
                             <option value="{{ $a }}" {{ request('action') == $a ? 'selected' : '' }}>{{ __(ucfirst(str_replace('_', ' ', $a))) }}</option>
@@ -34,8 +34,8 @@
                     </select>
                 </div>
                 <div>
-                    <label class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">Severidad</label>
-                    <select name="severity" class="text-sm border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 rounded-lg">
+                    <label for="filter_severity" class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">Severidad</label>
+                    <select id="filter_severity" name="severity" class="text-sm border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 rounded-lg">
                         <option value="">Todas</option>
                         @foreach($severities as $s)
                             <option value="{{ $s }}" {{ request('severity') == $s ? 'selected' : '' }}>{{ __(ucfirst($s)) }}</option>
@@ -101,7 +101,7 @@
     </div>
 
     @push('scripts')
-    <script>
+    <script nonce="{{ $cspNonce }}">
         let pollTimer = null;
 
         function startPolling() {

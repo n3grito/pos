@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 use Spatie\Permission\PermissionRegistrar;
 
@@ -122,6 +123,11 @@ class AppServiceProvider extends ServiceProvider
 
         RateLimiter::for('api', function () {
             return Limit::perMinute(60)->by(request()->ip());
+        });
+
+        View::composer('*', function ($view) {
+            $nonce = app()->bound('cspNonce') ? app('cspNonce') : '';
+            $view->with('cspNonce', $nonce);
         });
 
         Blade::directive('viteSafe', function ($expression) {
