@@ -40,6 +40,20 @@ Route::get('storage/{path}', function (string $path) {
     return response()->file(Storage::disk('public')->path($path));
 })->where('path', '.*');
 
+Route::post('/csp-report', function (\Illuminate\Http\Request $request) {
+    $report = $request->all();
+    \App\Models\ActivityLog::create([
+        'action' => 'csp_violation',
+        'severity' => 'warning',
+        'notable' => true,
+        'description' => 'Violación CSP: ' . ($report['csp-report']['blocked-uri'] ?? 'desconocida'),
+        'ip_address' => $request->ip(),
+        'user_agent' => $request->userAgent(),
+    ]);
+    sendErrorNotification('WARNING', 'Violación CSP detectada', json_encode($report, JSON_PRETTY_PRINT));
+    return response('', 204);
+})->name('csp.report');
+
 Route::get('/locale/{locale}', function (string $locale) {
     if (in_array($locale, config('app.available_locales', []), true)) {
         session(['locale' => $locale]);

@@ -23,7 +23,21 @@
                             <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
                                 @foreach($files as $file)
                                 <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/50">
-                                    <td class="px-4 py-3 text-sm text-gray-900 dark:text-gray-100 font-medium">{{ $file['name'] }}</td>
+                                    <td class="px-4 py-3">
+                                        <div class="flex items-center gap-2">
+                                            <a href="{{ route('logs.show', $file['name']) }}" class="text-sm text-blue-600 dark:text-blue-400 hover:underline font-medium">{{ $file['name'] }}</a>
+                                            @if($file['error_count'] > 0)
+                                                <span class="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium bg-red-100 text-red-800 dark:bg-red-900/50 dark:text-red-300">
+                                                    {{ $file['error_count'] }} error{{ $file['error_count'] !== 1 ? 'es' : '' }}
+                                                </span>
+                                            @endif
+                                            @if($file['warning_count'] > 0)
+                                                <span class="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium bg-yellow-100 text-yellow-800 dark:bg-yellow-900/50 dark:text-yellow-300">
+                                                    {{ $file['warning_count'] }} warning{{ $file['warning_count'] !== 1 ? 's' : '' }}
+                                                </span>
+                                            @endif
+                                        </div>
+                                    </td>
                                     <td class="px-4 py-3 text-sm text-gray-600 dark:text-gray-400 text-right">{{ number_format($file['size'] / 1024, 1) }} KB</td>
                                     <td class="px-4 py-3 text-sm text-gray-600 dark:text-gray-400 text-right">{{ date('d/m/Y H:i', $file['date']) }}</td>
                                     <td class="px-4 py-3 text-right text-sm space-x-2">

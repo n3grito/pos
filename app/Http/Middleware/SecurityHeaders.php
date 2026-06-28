@@ -32,7 +32,9 @@ class SecurityHeaders
              . "form-action 'self'; "
              . "frame-ancestors 'none'; "
              . "base-uri 'self'; "
-             . "object-src 'none'";
+             . "object-src 'none'; "
+             . "report-uri " . route('csp.report', [], false) . "; "
+             . "report-to csp-endpoint";
 
         $response->headers->set('Content-Security-Policy', $csp);
 
