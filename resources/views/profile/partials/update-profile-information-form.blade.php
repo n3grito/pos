@@ -64,8 +64,7 @@
 
         <div>
             <x-input-label for="nit" :value="__('NIT')" />
-            <x-text-input id="nit" name="nit" type="text" class="mt-1 block w-full" :value="old('nit', $user->nit)" />
-            <x-input-error class="mt-2" :messages="$errors->get('nit')" />
+            <input id="nit" type="text" class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400 shadow-sm cursor-not-allowed" value="{{ old('nit', $user->nit) }}" readonly disabled>
         </div>
 
         <div>

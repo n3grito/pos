@@ -83,8 +83,13 @@
                 </div>
             </div>
 
-            <main class="pt-16 lg:ml-64">
-                {{ $slot }}
+            <main class="pt-16 lg:ml-64 min-h-screen flex flex-col">
+                <div class="flex-1">
+                    {{ $slot }}
+                </div>
+                <footer class="px-6 py-3 text-center text-xs text-gray-400 dark:text-gray-500 border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
+                    v{{ config('app.version', '1.0.0') }} &copy; {{ date('Y') }} {{ config('app.name') }}
+                </footer>
             </main>
         </div>
 

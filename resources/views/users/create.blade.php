@@ -23,6 +23,25 @@
                             </div>
 
                             <div>
+                                <x-input-label for="nit" :value="__('NIT')" />
+                                <x-text-input id="nit" class="block mt-1 w-full" type="text" name="nit" :value="old('nit')" maxlength="11" placeholder="00000000000" />
+                                <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">11 dígitos numéricos, único por usuario.</p>
+                                <x-input-error :messages="$errors->get('nit')" class="mt-2" />
+                            </div>
+
+                            <div>
+                                <x-input-label for="address" :value="__('Dirección postal')" />
+                                <textarea id="address" name="address" rows="2" class="block mt-1 w-full border-gray-300 dark:border-gray-600 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm dark:bg-gray-700 dark:text-gray-300">{{ old('address') }}</textarea>
+                                <x-input-error :messages="$errors->get('address')" class="mt-2" />
+                            </div>
+
+                            <div>
+                                <x-input-label for="phone_personal" :value="__('Número de teléfono')" />
+                                <x-text-input id="phone_personal" class="block mt-1 w-full" type="text" name="phone_personal" :value="old('phone_personal')" />
+                                <x-input-error :messages="$errors->get('phone_personal')" class="mt-2" />
+                            </div>
+
+                            <div>
                                 <x-input-label for="password" :value="__('Contraseña')" />
                                 <x-text-input id="password" class="block mt-1 w-full" type="password" name="password" required />
                                 <x-input-error :messages="$errors->get('password')" class="mt-2" />

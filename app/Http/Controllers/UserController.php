@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Models\Warehouse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rule;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
 
@@ -45,6 +46,9 @@ class UserController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users,email',
+            'nit' => 'nullable|string|size:11|regex:/^\d{11}$/|unique:users,nit',
+            'address' => 'nullable|string|max:500',
+            'phone_personal' => 'nullable|string|max:20',
             'password' => 'required|string|min:8|confirmed',
             'roles' => 'nullable|array',
             'roles.*' => 'exists:roles,id',
@@ -58,6 +62,9 @@ class UserController extends Controller
         $user = User::create([
             'name' => $validated['name'],
             'email' => $validated['email'],
+            'nit' => $validated['nit'] ?? null,
+            'address' => $validated['address'] ?? null,
+            'phone_personal' => $validated['phone_personal'] ?? null,
             'password' => Hash::make($validated['password']),
             'branch_id' => $validated['branch_id'],
             'warehouse_id' => $validated['warehouse_id'],
@@ -96,6 +103,9 @@ class UserController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users,email,' . $user->id,
+            'nit' => ['nullable', 'string', 'size:11', 'regex:/^\d{11}$/', Rule::unique('users', 'nit')->ignore($user->id)],
+            'address' => 'nullable|string|max:500',
+            'phone_personal' => 'nullable|string|max:20',
             'password' => 'nullable|string|min:8|confirmed',
             'roles' => 'nullable|array',
             'roles.*' => 'exists:roles,id',
@@ -108,6 +118,9 @@ class UserController extends Controller
 
         $user->name = $validated['name'];
         $user->email = $validated['email'];
+        $user->nit = $validated['nit'] ?? null;
+        $user->address = $validated['address'] ?? null;
+        $user->phone_personal = $validated['phone_personal'] ?? null;
         $user->branch_id = $validated['branch_id'];
         $user->warehouse_id = $validated['warehouse_id'];
         $user->is_active = $request->boolean('is_active');

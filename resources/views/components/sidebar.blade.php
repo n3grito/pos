@@ -340,7 +340,5 @@
         @endcanany
     </div>
 
-    <div class="absolute bottom-0 left-0 right-0 px-4 py-3 border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
-        <p class="text-xs text-gray-400 dark:text-gray-500 text-center">v{{ config('app.version', '1.0.0') }} &copy; {{ date('Y') }} {{ config('app.name') }}</p>
     </div>
 </nav>
