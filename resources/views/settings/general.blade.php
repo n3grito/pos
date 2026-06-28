@@ -138,5 +138,19 @@
                 </div>
             </div>
         </div>
+
+        <div class="mt-6 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl">
+            <div class="p-6">
+                <h3 class="text-lg font-semibold text-gray-700 dark:text-gray-300 mb-4">{{ __('Contenido de la página de bienvenida') }}</h3>
+                <form method="POST" action="{{ route('settings.general.update') }}">
+                    @csrf
+                    <p class="text-xs text-gray-500 dark:text-gray-400 mb-3">{{ __('Personaliza el texto que se muestra en la página de bienvenida (público). Si se deja vacío, se mostrará el contenido por defecto.') }}</p>
+                    <textarea id="welcome_content" name="welcome_content" rows="8" class="block w-full border-gray-300 dark:border-gray-600 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm dark:bg-gray-700 dark:text-gray-300 text-sm">{{ old('welcome_content', $welcomeContent) }}</textarea>
+                    <div class="mt-4 flex justify-end">
+                        <x-primary-button>{{ __('Guardar contenido') }}</x-primary-button>
+                    </div>
+                </form>
+            </div>
+        </div>
     </x-content-wrapper>
 </x-app-layout>

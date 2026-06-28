@@ -62,6 +62,7 @@ class UserController extends Controller
             'branch_id' => $validated['branch_id'],
             'warehouse_id' => $validated['warehouse_id'],
             'is_active' => $request->boolean('is_active'),
+            'must_change_password' => true,
         ]);
 
         $roles = Role::whereIn('id', $validated['roles'] ?? [])->pluck('name')->toArray();

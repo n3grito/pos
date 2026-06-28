@@ -70,6 +70,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'locale' => \App\Http\Middleware\SetLocale::class,
             'cashier.session' => ExtendCashierSession::class,
             'two-factor' => \App\Http\Middleware\TwoFactorMiddleware::class,
+            'must-change-password' => \App\Http\Middleware\MustChangePasswordMiddleware::class,
         ]);
 
         $middleware->web(append: [

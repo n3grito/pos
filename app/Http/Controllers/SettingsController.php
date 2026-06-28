@@ -111,15 +111,17 @@ class SettingsController extends Controller
     {
         $registrationEnabled = GeneralSetting::get('registration_enabled', '1') === '1';
         $twoFactorEnabled = GeneralSetting::get('2fa_enabled', '0') === '1';
+        $welcomeContent = GeneralSetting::get('welcome_content', '');
         $receipt = ReceiptSetting::firstOrNew([]);
 
-        return view('settings.general', compact('registrationEnabled', 'twoFactorEnabled', 'receipt'));
+        return view('settings.general', compact('registrationEnabled', 'twoFactorEnabled', 'welcomeContent', 'receipt'));
     }
 
     public function updateGeneral(Request $request)
     {
         GeneralSetting::set('registration_enabled', $request->boolean('registration_enabled') ? '1' : '0');
         GeneralSetting::set('2fa_enabled', $request->boolean('2fa_enabled') ? '1' : '0');
+        GeneralSetting::set('welcome_content', $request->input('welcome_content', ''));
 
         $validated = $request->validate([
             'company_name' => 'nullable|string|max:255',

@@ -3,7 +3,12 @@
 @auth
     <x-dropdown align="right" width="48">
         <x-slot name="trigger">
-            <button class="inline-flex items-center px-3 py-2 text-sm font-medium text-gray-600 dark:text-gray-300 bg-white dark:bg-gray-800 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-800 dark:hover:text-gray-100 focus:outline-none transition-colors duration-150">
+            <button class="inline-flex items-center gap-2 px-3 py-2 text-sm font-medium text-gray-600 dark:text-gray-300 bg-white dark:bg-gray-800 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-800 dark:hover:text-gray-100 focus:outline-none transition-colors duration-150">
+                @if(Auth::user()->profile_photo_path)
+                    <img src="{{ asset('storage/' . Auth::user()->profile_photo_path) }}" alt="" class="h-7 w-7 rounded-full object-cover">
+                @else
+                    <div class="h-7 w-7 rounded-full bg-indigo-100 dark:bg-indigo-900/50 flex items-center justify-center text-xs font-bold text-indigo-600 dark:text-indigo-400 shrink-0">{{ substr(Auth::user()->name, 0, 1) }}</div>
+                @endif
                 <div>{{ Auth::user()->name }}</div>
 
                 <div class="ms-1">

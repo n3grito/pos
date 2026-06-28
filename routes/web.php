@@ -69,13 +69,18 @@ Route::get('/locale/{locale}', function (string $locale) {
 Route::get('/', [WelcomeController::class, 'index']);
 Route::view('/privacy', 'privacy')->name('privacy');
 
-Route::middleware(['auth', 'verified', 'two-factor', 'throttle:global'])->group(function () {
+Route::middleware(['auth', 'verified', 'two-factor', 'must-change-password', 'throttle:global'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('/dashboard/chart-data', [DashboardController::class, 'chartData'])->name('dashboard.chart-data');
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+    Route::prefix('password')->name('password.')->group(function () {
+        Route::get('/change', [\App\Http\Controllers\Auth\PasswordChangeController::class, 'showForm'])->name('change.form');
+        Route::post('/change', [\App\Http\Controllers\Auth\PasswordChangeController::class, 'update'])->name('change.update');
+    });
 
     Route::resource('branches', BranchController::class);
     Route::resource('categories', CategoryController::class);
