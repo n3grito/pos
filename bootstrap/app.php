@@ -76,6 +76,7 @@ return Application::configure(basePath: dirname(__DIR__))
             SecurityHeaders::class,
             ExtendCashierSession::class,
             XssProtection::class,
+            \App\Http\Middleware\LogUserActivity::class,
         ]);
     })
     ->withSchedule(function (Schedule $schedule): void {
