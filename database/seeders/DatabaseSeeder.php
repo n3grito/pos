@@ -17,11 +17,14 @@ class DatabaseSeeder extends Seeder
         $this->call(UnitSeeder::class);
         $this->call(PriceListSeeder::class);
 
-        $admin = User::factory()->create([
-            'name' => 'Admin',
-            'email' => 'admin@pos.com',
-            'password' => bcrypt('admin123'),
-        ]);
+        $admin = User::firstOrCreate(
+            ['email' => 'admin@pos.com'],
+            [
+                'name' => 'Admin',
+                'password' => bcrypt('admin123'),
+                'email_verified_at' => now(),
+            ]
+        );
         $admin->assignRole('Admin');
 
         $branch = Branch::create([
