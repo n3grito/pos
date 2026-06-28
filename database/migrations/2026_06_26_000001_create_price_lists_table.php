@@ -24,11 +24,6 @@ return new class extends Migration
             $table->unique(['price_list_id', 'product_id']);
         });
 
-        if (!Schema::hasColumn('sales', 'price_list_id')) {
-            Schema::table('sales', function (Blueprint $table) {
-                $table->foreignId('price_list_id')->nullable()->constrained()->nullOnDelete();
-            });
-        }
     }
 
     public function down(): void
