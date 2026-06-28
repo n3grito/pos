@@ -69,7 +69,7 @@ Route::get('/locale/{locale}', function (string $locale) {
 Route::get('/', [WelcomeController::class, 'index']);
 Route::view('/privacy', 'privacy')->name('privacy');
 
-Route::middleware(['auth', 'verified', 'throttle:global'])->group(function () {
+Route::middleware(['auth', 'verified', 'two-factor', 'throttle:global'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('/dashboard/chart-data', [DashboardController::class, 'chartData'])->name('dashboard.chart-data');
 
@@ -159,6 +159,14 @@ Route::middleware(['auth', 'verified', 'throttle:global'])->group(function () {
     Route::get('activity-logs', [ActivityLogController::class, 'index'])->name('activity-logs.index');
     Route::get('activity-logs/recent-alerts', [ActivityLogController::class, 'recentAlerts'])->name('activity-logs.recent-alerts');
     Route::get('activity-logs/stream', [ActivityLogController::class, 'stream'])->name('activity-logs.stream');
+
+    Route::prefix('two-factor')->name('two-factor.')->group(function () {
+        Route::get('/', [\App\Http\Controllers\TwoFactorController::class, 'showForm'])->name('show');
+        Route::post('send', [\App\Http\Controllers\TwoFactorController::class, 'sendCode'])->name('send');
+        Route::post('verify', [\App\Http\Controllers\TwoFactorController::class, 'verifyCode'])->name('verify');
+        Route::post('enable', [\App\Http\Controllers\TwoFactorController::class, 'enable'])->name('enable');
+        Route::post('disable', [\App\Http\Controllers\TwoFactorController::class, 'disable'])->name('disable');
+    });
 
     Route::prefix('logs')->name('logs.')->group(function () {
         Route::get('/', [LogViewerController::class, 'index'])->name('index');

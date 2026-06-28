@@ -69,6 +69,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'registration.enabled' => \App\Http\Middleware\RegistrationEnabled::class,
             'locale' => \App\Http\Middleware\SetLocale::class,
             'cashier.session' => ExtendCashierSession::class,
+            'two-factor' => \App\Http\Middleware\TwoFactorMiddleware::class,
         ]);
 
         $middleware->web(append: [
