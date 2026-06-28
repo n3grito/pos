@@ -41,9 +41,13 @@ Route::get('storage/{path}', function (string $path) {
 })->where('path', '.*');
 
 Route::get('/locale/{locale}', function (string $locale) {
-    if (in_array($locale, ['es_MX', 'en_US', 'en_GB'])) {
+    if (in_array($locale, config('app.available_locales', []), true)) {
         session(['locale' => $locale]);
         app()->setLocale($locale);
+
+        if (auth()->user()) {
+            auth()->user()->updateQuietly(['locale' => $locale]);
+        }
     }
     return redirect()->back();
 })->name('locale.switch');
