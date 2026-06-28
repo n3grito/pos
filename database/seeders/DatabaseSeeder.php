@@ -27,32 +27,27 @@ class DatabaseSeeder extends Seeder
         );
         $admin->assignRole('Admin');
 
-        $branch = Branch::create([
-            'name' => 'Sucursal Principal',
-            'address' => 'Av. Principal 123',
-            'phone' => '555-0100',
-            'email' => 'principal@pos.com',
-            'is_active' => true,
-        ]);
+        $branch = Branch::firstOrCreate(
+            ['name' => 'Sucursal Principal'],
+            ['address' => 'Av. Principal 123', 'phone' => '555-0100', 'email' => 'principal@pos.com', 'is_active' => true],
+        );
 
-        $warehouse = Warehouse::create([
-            'name' => 'Almacén Central',
-            'description' => 'Almacén principal',
-            'address' => 'Av. Industrial 1500',
-            'phone' => '555-2000',
-            'is_active' => true,
-        ]);
+        $warehouse = Warehouse::firstOrCreate(
+            ['name' => 'Almacén Central'],
+            ['description' => 'Almacén principal', 'address' => 'Av. Industrial 1500', 'phone' => '555-2000', 'is_active' => true],
+        );
 
-        Currency::insert([
-            ['name' => 'Peso Cubano', 'code' => 'CUP', 'symbol' => '$', 'exchange_rate' => 1.0000, 'is_active' => true, 'created_at' => now(), 'updated_at' => now()],
-            ['name' => 'Dólar Estadounidense', 'code' => 'USD', 'symbol' => '$', 'exchange_rate' => 120.0000, 'is_active' => true, 'created_at' => now(), 'updated_at' => now()],
-            ['name' => 'Euro', 'code' => 'EUR', 'symbol' => '€', 'exchange_rate' => 130.0000, 'is_active' => true, 'created_at' => now(), 'updated_at' => now()],
-        ]);
+        foreach ([
+            ['name' => 'Peso Cubano', 'code' => 'CUP', 'symbol' => '$', 'exchange_rate' => 1.0000, 'is_active' => true],
+            ['name' => 'Dólar Estadounidense', 'code' => 'USD', 'symbol' => '$', 'exchange_rate' => 120.0000, 'is_active' => true],
+            ['name' => 'Euro', 'code' => 'EUR', 'symbol' => '€', 'exchange_rate' => 130.0000, 'is_active' => true],
+        ] as $currency) {
+            Currency::firstOrCreate(['code' => $currency['code']], $currency);
+        }
 
-        CashRegister::create([
-            'branch_id' => $branch->id,
-            'name' => 'Caja Principal',
-            'is_active' => true,
-        ]);
+        CashRegister::firstOrCreate(
+            ['name' => 'Caja Principal', 'branch_id' => $branch->id],
+            ['is_active' => true],
+        );
     }
 }

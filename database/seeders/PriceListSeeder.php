@@ -10,17 +10,15 @@ class PriceListSeeder extends Seeder
 {
     public function run(): void
     {
-        $base = PriceList::create(['name' => 'Base', 'is_default' => true]);
-        PriceList::create(['name' => 'Mayor']);
-        $vip = PriceList::create(['name' => 'VIP']);
+        $base = PriceList::firstOrCreate(['name' => 'Base'], ['is_default' => true]);
+        PriceList::firstOrCreate(['name' => 'Mayor']);
+        $vip = PriceList::firstOrCreate(['name' => 'VIP']);
 
         $products = Product::all();
 
         foreach ($products as $product) {
-            // Base list uses selling_price (no entry needed, just the default logic)
-            // VIP list: 20% discount
             $vipPrice = round($product->selling_price * 0.8, 2);
-            $product->priceLists()->attach($vip->id, ['price' => $vipPrice]);
+            $product->priceLists()->syncWithoutDetaching([$vip->id => ['price' => $vipPrice]]);
         }
     }
 }
