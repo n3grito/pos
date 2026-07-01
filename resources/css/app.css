@@ -3,3 +3,81 @@
 @tailwind utilities;
 
 [x-cloak] { display: none !important; }
+
+/* Touch-friendly targets for small screens */
+@media (max-width: 1023px) {
+    button, a, select, input[type="checkbox"], input[type="radio"] {
+        cursor: default;
+    }
+    input, select, textarea {
+        font-size: 16px !important;
+    }
+    .item-card {
+        min-height: 56px;
+    }
+}
+@media (max-width: 639px) {
+    .table-wrap {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        margin-left: -0.75rem;
+        margin-right: -0.75rem;
+        padding-left: 0.75rem;
+        padding-right: 0.75rem;
+    }
+    .table-wrap table {
+        min-width: 640px;
+    }
+    .form-actions {
+        flex-direction: column;
+    }
+    .form-actions .btn {
+        width: 100%;
+        justify-content: center;
+    }
+    .filter-actions {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    .filter-actions .btn {
+        width: 100%;
+        justify-content: center;
+    }
+    .mobile-full {
+        width: 100%;
+    }
+    form > .flex.items-center.justify-end:last-child {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    form > .flex.items-center.justify-end:last-child > * {
+        width: 100%;
+        justify-content: center;
+        margin-left: 0 !important;
+    }
+    form > .flex.items-center.justify-end:last-child > * + * {
+        margin-top: 0.5rem;
+    }
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 3px;
+}
+.dark ::-webkit-scrollbar-thumb {
+    background: #475569;
+}
+
+/* Print optimizations */
+@media print {
+    nav, .fixed, footer, [x-data] { display: none !important; }
+    main { margin-left: 0 !important; padding-top: 0 !important; }
+}

@@ -2,9 +2,11 @@
 
 use App\Http\Middleware\ExtendCashierSession;
 use App\Http\Middleware\SecurityHeaders;
+use App\Http\Middleware\SetTimezone;
 use App\Http\Middleware\XssProtection;
 use App\Mail\SystemErrorMail;
 use App\Models\ActivityLog;
+use App\Models\GeneralSetting;
 use App\Models\MailSetting;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Console\Scheduling\Schedule;
@@ -18,6 +20,7 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\RateLimiter;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
+if (!function_exists('sendErrorNotification')) {
 function sendErrorNotification(string $level, string $shortMessage, string $fullMessage, ?string $trace = null, ?Request $request = null): void
 {
     try {
@@ -57,11 +60,13 @@ function sendErrorNotification(string $level, string $shortMessage, string $full
         // Silent fail: notification should not break the app
     }
 }
+}
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
         web: __DIR__.'/../routes/web.php',
         commands: __DIR__.'/../routes/console.php',
+        channels: __DIR__.'/../routes/channels.php',
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
@@ -74,6 +79,7 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
 
         $middleware->web(append: [
+            SetTimezone::class,
             \App\Http\Middleware\SetLocale::class,
             SecurityHeaders::class,
             ExtendCashierSession::class,
@@ -89,6 +95,9 @@ return Application::configure(basePath: dirname(__DIR__))
         $schedule->command('model:prune', [
             '--model' => [\App\Models\ActivityLog::class],
         ])->daily();
+
+        $schedule->job(new \App\Jobs\CreateBackupJob)->daily()->description('Backup automático de base de datos');
+        $schedule->job(new \App\Jobs\SendStockAlertJob)->dailyAt('08:00')->description('Alerta de stock bajo por correo');
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->shouldRenderJsonWhen(

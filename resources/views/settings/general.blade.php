@@ -43,6 +43,17 @@
                             </div>
 
                             <div>
+                                <x-input-label for="timezone" :value="__('Zona Horaria')" />
+                                <p class="text-xs text-gray-500 dark:text-gray-400 mb-1">{{ __('Zona horaria del sistema') }}</p>
+                                <select id="timezone" name="timezone" class="block mt-1 w-full border-gray-300 dark:border-gray-600 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm dark:bg-gray-700 dark:text-gray-300">
+                                    @foreach ($timezones as $tz)
+                                        <option value="{{ $tz }}" {{ $timezone === $tz ? 'selected' : '' }}>{{ $tz }}</option>
+                                    @endforeach
+                                </select>
+                                <x-input-error :messages="$errors->get('timezone')" class="mt-2" />
+                            </div>
+
+                            <div>
                                 <x-input-label for="logo" :value="__('Logo de la Empresa')" />
                                 <p class="text-xs text-gray-500 dark:text-gray-400 mb-1">{{ __('Máximo 2MB. PNG, JPG, SVG o WEBP.') }}</p>
                                 <input id="logo" name="logo" type="file" accept="image/png,image/jpeg,image/svg+xml,image/webp" class="block mt-1 w-full text-sm text-gray-500 dark:text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 dark:file:bg-indigo-900/50 file:text-indigo-700 dark:file:text-indigo-400 hover:file:bg-indigo-100 dark:hover:file:bg-indigo-800/50" />

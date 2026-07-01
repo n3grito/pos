@@ -3,13 +3,16 @@
 namespace App\Providers;
 
 use App\Models\ActivityLog;
+use App\Models\GeneralSetting;
 use App\Models\MailSetting;
 use App\Models\Product;
 use App\Models\Purchase;
 use App\Models\Sale;
 use App\Models\User;
+use App\Services\CacheService;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Support\Facades\Blade;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Event;
@@ -135,20 +138,38 @@ class AppServiceProvider extends ServiceProvider
         });
 
         try {
-            $mailSetting = MailSetting::first();
-            if ($mailSetting) {
-                Config::set('mail.default', $mailSetting->mailer);
-                Config::set('mail.mailers.smtp.host', $mailSetting->host);
-                Config::set('mail.mailers.smtp.port', $mailSetting->port);
-                Config::set('mail.mailers.smtp.username', $mailSetting->username);
-                Config::set('mail.mailers.smtp.password', $mailSetting->encrypted_password ? Crypt::decryptString($mailSetting->encrypted_password) : '');
-                Config::set('mail.mailers.smtp.encryption', $mailSetting->encryption === 'null' ? null : $mailSetting->encryption);
-                Config::set('mail.from.address', $mailSetting->from_address);
-                Config::set('mail.from.name', $mailSetting->from_name);
+            $settings = CacheService::settings();
+            if ($mail = $settings['mail'] ?? null) {
+                Config::set('mail.default', $mail['mailer'] ?? 'log');
+                Config::set('mail.mailers.smtp.host', $mail['host'] ?? '');
+                Config::set('mail.mailers.smtp.port', $mail['port'] ?? 587);
+                Config::set('mail.mailers.smtp.username', $mail['username'] ?? '');
+                Config::set('mail.mailers.smtp.password', ($mail['encrypted_password'] ?? false) ? Crypt::decryptString($mail['encrypted_password']) : '');
+                Config::set('mail.mailers.smtp.encryption', ($mail['encryption'] ?? 'null') === 'null' ? null : ($mail['encryption'] ?? null));
+                Config::set('mail.from.address', $mail['from_address'] ?? 'noreply@example.com');
+                Config::set('mail.from.name', $mail['from_name'] ?? config('app.name'));
             }
         } catch (\Exception $e) {
             // Table may not exist yet (before migration)
         }
+
+        try {
+            $timezone = CacheService::settings()['timezone'] ?? 'America/Havana';
+            if (is_string($timezone) && in_array($timezone, timezone_identifiers_list())) {
+                Config::set('app.timezone', $timezone);
+                date_default_timezone_set($timezone);
+            }
+        } catch (\Exception $e) {
+            // Table may not exist yet (before migration)
+        }
+
+        // Invalidate caches on model changes
+        $invalidate = fn() => CacheService::clearDashboard();
+        Product::created($invalidate);
+        Product::updated($invalidate);
+        Product::deleted($invalidate);
+        Sale::created($invalidate);
+        Sale::updated($invalidate);
     }
 
     private function logSensitiveAction(string $action, string $severity, string $description, $model, $user = null): void

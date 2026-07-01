@@ -115,11 +115,11 @@
                             </div>
                         </div>
 
-                        <div class="flex items-center justify-end mt-6 space-x-3">
-                            <a href="{{ route('products.index') }}" class="inline-flex items-center px-4 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md font-semibold text-xs text-gray-700 dark:text-gray-300 uppercase tracking-widest shadow-sm hover:bg-gray-50 dark:hover:bg-gray-600">
+                        <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-end mt-6 gap-2 sm:space-x-3 sm:gap-0">
+                            <a href="{{ route('products.index') }}" class="text-center inline-flex items-center justify-center px-4 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md font-semibold text-xs text-gray-700 dark:text-gray-300 uppercase tracking-widest shadow-sm hover:bg-gray-50 dark:hover:bg-gray-600">
                                 {{ __('Cancelar') }}
                             </a>
-                            <x-primary-button>{{ __('Guardar') }}</x-primary-button>
+                            <x-primary-button class="w-full sm:w-auto justify-center">{{ __('Guardar') }}</x-primary-button>
                         </div>
                     </form>
                 </div>

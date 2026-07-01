@@ -10,12 +10,16 @@ class PermissionSeeder extends Seeder
 {
     public function run(): void
     {
-        app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
+        try {
+            app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
+        } catch (\Exception $e) {
+            // Redis may not be available; proceed anyway
+        }
 
         // Standard CRUD modules (view-any, view, create, update, delete)
         $crudModules = [
             'branch', 'category', 'product', 'client', 'supplier',
-            'purchase', 'cash-register', 'user', 'warehouse', 'currency', 'service',
+            'purchase', 'cash-register', 'user', 'warehouse', 'currency', 'service', 'production',
         ];
 
         // sale (no delete), role (no view)
@@ -43,6 +47,8 @@ class PermissionSeeder extends Seeder
             'setting.manage',
             'warehouse.stock',
             'warehouse.transfer',
+            'production.complete',
+            'production.cancel',
             'inventory.view',
             'inventory.movements',
             'inventory.adjustment',
@@ -57,6 +63,16 @@ class PermissionSeeder extends Seeder
             'manual.view',
             'report.view-any',
         ];
+
+        // CRM module permissions
+        $crmModules = ['promotion', 'customer-group'];
+        foreach ($crmModules as $module) {
+            $permissions[] = "{$module}.view-any";
+            $permissions[] = "{$module}.view";
+            $permissions[] = "{$module}.create";
+            $permissions[] = "{$module}.update";
+            $permissions[] = "{$module}.delete";
+        }
 
         $permissions = array_merge($permissions, $extra);
 

@@ -1,21 +1,26 @@
 {
-    "name": "POS System",
+    "name": "Sistema POS",
     "short_name": "POS",
-    "start_url": "/",
+    "start_url": "/dashboard",
     "display": "standalone",
     "background_color": "#ffffff",
     "theme_color": "#4F46E5",
     "description": "Sistema POS para administrar ventas, compras, inventario y clientes.",
+    "orientation": "any",
+    "lang": "es",
+    "categories": ["business", "shopping"],
     "icons": [
         {
-            "src": "/icons/icon-192.png",
+            "src": "/icons/icon-192.svg",
             "sizes": "192x192",
-            "type": "image/png"
+            "type": "image/svg+xml",
+            "purpose": "any"
         },
         {
-            "src": "/icons/icon-512.png",
-            "sizes": "512x512",
-            "type": "image/png"
+            "src": "/icons/icon-192.svg",
+            "sizes": "192x192",
+            "type": "image/svg+xml",
+            "purpose": "maskable"
         }
     ]
 }

@@ -17,6 +17,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\CurrencyController;
 use App\Http\Controllers\InventoryController;
 use App\Http\Controllers\ServiceController;
+use App\Http\Controllers\ProductionOrderController;
 use App\Http\Controllers\WarehouseController;
 use App\Http\Controllers\WarehouseMovementController;
 use App\Http\Controllers\ManualController;
@@ -31,6 +32,8 @@ use App\Http\Controllers\DatabaseBackupController;
 use App\Http\Controllers\DatabaseExplorerController;
 use App\Http\Controllers\LogViewerController;
 use App\Http\Controllers\ActivityLogController;
+use App\Http\Controllers\PromotionController;
+use App\Http\Controllers\CustomerGroupController;
 
 // Fallback para servir archivos de storage cuando no existe el symlink public/storage
 Route::get('storage/{path}', function (string $path) {
@@ -68,6 +71,7 @@ Route::get('/locale/{locale}', function (string $locale) {
 
 Route::get('/', [WelcomeController::class, 'index']);
 Route::view('/privacy', 'privacy')->name('privacy');
+Route::view('/offline', 'offline')->name('offline');
 
 Route::middleware(['auth', 'verified', 'two-factor', 'must-change-password', 'throttle:global'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
@@ -90,12 +94,22 @@ Route::middleware(['auth', 'verified', 'two-factor', 'must-change-password', 'th
     Route::resource('services', ServiceController::class)->middleware('throttle:sensitive');
     Route::post('services/import', [ServiceController::class, 'import'])->name('services.import')->middleware('throttle:sensitive');
     Route::get('services/export/download', [ServiceController::class, 'export'])->name('services.export')->middleware('throttle:exports');
+    Route::resource('production', ProductionOrderController::class)->middleware('throttle:sensitive');
+    Route::post('production/{production}/start', [ProductionOrderController::class, 'start'])->name('production.start')->middleware('throttle:sensitive');
+    Route::get('production/{production}/complete', [ProductionOrderController::class, 'completeForm'])->name('production.complete-form')->middleware('throttle:sensitive');
+    Route::post('production/{production}/complete', [ProductionOrderController::class, 'complete'])->name('production.complete')->middleware('throttle:sensitive');
+    Route::post('production/{production}/cancel', [ProductionOrderController::class, 'cancel'])->name('production.cancel')->middleware('throttle:sensitive');
     Route::resource('clients', ClientController::class);
     Route::resource('suppliers', SupplierController::class);
     Route::resource('purchases', PurchaseController::class)->middleware('throttle:sensitive');
     Route::get('purchases/kanban/view', [PurchaseController::class, 'kanban'])->name('purchases.kanban');
     Route::resource('sales', SaleController::class);
     Route::get('sales/kanban/view', [SaleController::class, 'kanban'])->name('sales.kanban');
+
+    Route::resource('promotions', PromotionController::class)->middleware('throttle:sensitive');
+    Route::put('promotions/{promotion}/toggle-active', [PromotionController::class, 'toggleActive'])->name('promotions.toggle-active');
+
+    Route::resource('customer-groups', CustomerGroupController::class)->middleware('throttle:sensitive');
     Route::resource('price-lists', PriceListController::class)->except('show')->middleware('throttle:sensitive');
     Route::resource('cash-registers', CashRegisterController::class);
     Route::resource('users', UserController::class)->middleware('throttle:sensitive');
@@ -147,6 +161,8 @@ Route::middleware(['auth', 'verified', 'two-factor', 'must-change-password', 'th
         Route::get('sales', [ReportController::class, 'salesByDate'])->name('sales');
         Route::get('top-products', [ReportController::class, 'topProducts'])->name('top-products');
         Route::get('low-stock', [ReportController::class, 'lowStock'])->name('low-stock');
+        Route::get('export-pdf/{type}', [ReportController::class, 'exportPdf'])->name('export-pdf')->middleware('throttle:exports');
+        Route::get('export-csv/{type}', [ReportController::class, 'exportCsv'])->name('export-csv')->middleware('throttle:exports');
     });
 
     Route::prefix('database')->name('database.')->group(function () {

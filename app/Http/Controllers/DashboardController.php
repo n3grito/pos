@@ -6,6 +6,8 @@ use App\Models\Product;
 use App\Models\Client;
 use App\Models\Sale;
 use App\Models\SaleDetail;
+use App\Models\UserDashboardWidget;
+use App\Services\CacheService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -13,21 +15,60 @@ class DashboardController extends Controller
 {
     public function index()
     {
-        $salesToday = Sale::whereDate('date', today())->where('status', 'completed')->sum('total');
-        $salesMonth = Sale::whereMonth('date', now()->month)->whereYear('date', now()->year)->where('status', 'completed')->sum('total');
-        $totalProducts = Product::count();
-        $totalClients = Client::count();
+        $salesToday = CacheService::salesToday();
+        $salesMonth = CacheService::salesMonth();
+        $totalProducts = CacheService::productsCount();
+        $totalClients = CacheService::clientsCount();
         $lowStock = Product::where('is_active', true)->whereColumn('stock', '<=', 'min_stock')->get();
         $recentSales = Sale::with(['user', 'client', 'branch'])->where('status', 'completed')->latest()->take(10)->get();
 
-        return view('dashboard', compact('salesToday', 'salesMonth', 'totalProducts', 'totalClients', 'lowStock', 'recentSales'));
+        $enabledWidgets = $this->getEnabledWidgets();
+
+        return view('dashboard', compact(
+            'salesToday', 'salesMonth', 'totalProducts', 'totalClients',
+            'lowStock', 'recentSales', 'enabledWidgets'
+        ));
+    }
+
+    protected function getEnabledWidgets(): array
+    {
+        $definitions = UserDashboardWidget::getDefaultWidgets();
+        $userWidgets = UserDashboardWidget::where('user_id', auth()->id())
+            ->orderBy('order')
+            ->get()
+            ->keyBy('widget_key');
+
+        $keys = [];
+        foreach ($definitions as $key => $config) {
+            if ($userWidgets->has($key)) {
+                if ($userWidgets->get($key)->enabled) {
+                    $keys[] = $key;
+                }
+            } else {
+                $keys[] = $key;
+            }
+        }
+        return $keys;
+    }
+
+    public static function seedWidgetsForUser(int $userId): void
+    {
+        $order = 0;
+        foreach (UserDashboardWidget::getDefaultWidgets() as $key => $config) {
+            UserDashboardWidget::firstOrCreate(
+                ['user_id' => $userId, 'widget_key' => $key],
+                [
+                    'enabled' => !in_array($key, ['recent-activity', 'top-products']),
+                    'order' => $order++,
+                ]
+            );
+        }
     }
 
     public function chartData()
     {
         $days = 30;
 
-        // Daily sales for last 30 days
         $dailySales = Sale::where('status', 'completed')
             ->where('date', '>=', now()->subDays($days)->startOfDay())
             ->selectRaw('DATE(date) as date, SUM(total) as total')
@@ -43,7 +84,6 @@ class DashboardController extends Controller
         $dailySalesData = $dates->map(fn ($d) => round((float) ($dailySales[$d] ?? 0), 2));
         $dailySalesLabels = $dates->map(fn ($d) => \Carbon\Carbon::parse($d)->format('d/m'));
 
-        // Sales by payment method
         $paymentMethods = Sale::where('status', 'completed')
             ->selectRaw('payment_method, SUM(total) as total')
             ->groupBy('payment_method')
@@ -56,7 +96,6 @@ class DashboardController extends Controller
             'credit' => __('Crédito'),
         ];
 
-        // Top products
         $topProducts = SaleDetail::selectRaw('products.name, SUM(sale_details.quantity) as total_qty')
             ->join('products', 'sale_details.product_id', '=', 'products.id')
             ->join('sales', 'sale_details.sale_id', '=', 'sales.id')
@@ -67,7 +106,6 @@ class DashboardController extends Controller
             ->take(10)
             ->pluck('total_qty', 'name');
 
-        // Sales by day of week
         $dayOfWeek = Sale::where('status', 'completed')
             ->selectRaw('DAYOFWEEK(date) as day_num, SUM(total) as total')
             ->groupBy('day_num')

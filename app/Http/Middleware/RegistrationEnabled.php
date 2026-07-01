@@ -11,7 +11,7 @@ class RegistrationEnabled
 {
     public function handle(Request $request, Closure $next): Response
     {
-        if (GeneralSetting::get('registration_enabled', '1') !== '1') {
+        if (GeneralSetting::get('registration_enabled', '1') !== true && GeneralSetting::get('registration_enabled', '1') !== '1') {
             abort(404);
         }
 

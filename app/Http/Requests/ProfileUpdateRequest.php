@@ -28,6 +28,7 @@ class ProfileUpdateRequest extends FormRequest
             ],
             'address' => ['nullable', 'string', 'max:500'],
             'phone_personal' => ['nullable', 'string', 'max:20'],
+            'dark_mode' => ['nullable', 'string', 'in:light,dark,system'],
             'profile_photo' => ['nullable', 'image', 'mimes:png,jpg,jpeg,webp', 'max:2048'],
         ];
     }

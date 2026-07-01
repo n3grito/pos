@@ -36,8 +36,8 @@
                                 <option value="cancelled" {{ request('status') === 'cancelled' ? 'selected' : '' }}>{{ __('Cancelada') }}</option>
                             </select>
                         </div>
-                        <div class="flex space-x-2">
-                            <x-primary-button>{{ __('Filtrar') }}</x-primary-button>
+                        <div class="flex flex-col sm:flex-row gap-2 sm:space-x-2">
+                            <x-primary-button class="w-full sm:w-auto justify-center">{{ __('Filtrar') }}</x-primary-button>
                             <a href="{{ route('sales.index') }}" class="inline-flex items-center px-4 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md font-semibold text-xs text-gray-700 dark:text-gray-300 uppercase tracking-widest shadow-sm hover:bg-gray-50 dark:hover:bg-gray-700">
                                 {{ __('Limpiar') }}
                             </a>

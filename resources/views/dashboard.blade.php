@@ -4,7 +4,9 @@
     </x-slot>
 
     <x-content-wrapper>
+        <livewire:dashboard.dashboard-widgets wire:key="dashboard-widgets" />
 
+        @if (in_array('sales-kpi', $enabledWidgets))
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-5 mb-8">
             <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-5">
                 <div class="flex items-center justify-between">
@@ -66,7 +68,9 @@
                 </div>
             </div>
         </div>
+        @endif
 
+        @if (in_array('sales-chart', $enabledWidgets))
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
             <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-5">
                 <div class="flex items-center justify-between mb-4">
@@ -98,7 +102,9 @@
                 <div id="dayOfWeekChart" data-chart data-label="{{ __('Ventas') }}" style="min-height:300px"></div>
             </div>
         </div>
+        @endif
 
+        @if (in_array('recent-sales', $enabledWidgets))
         <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl">
             <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
                 <h3 class="text-base font-semibold text-gray-800 dark:text-gray-200">{{ __('Ventas Recientes') }}</h3>
@@ -136,5 +142,6 @@
                 </table>
             </div>
         </div>
+        @endif
     </x-content-wrapper>
 </x-app-layout>

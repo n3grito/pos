@@ -112,9 +112,12 @@ class SettingsController extends Controller
         $registrationEnabled = GeneralSetting::get('registration_enabled', '1') === '1';
         $twoFactorEnabled = GeneralSetting::get('2fa_enabled', false);
         $welcomeContent = GeneralSetting::get('welcome_content', '');
+        $timezone = GeneralSetting::get('timezone', 'America/Havana');
+        $timezone = is_string($timezone) ? $timezone : 'America/Havana';
         $receipt = ReceiptSetting::firstOrNew([]);
+        $timezones = timezone_identifiers_list();
 
-        return view('settings.general', compact('registrationEnabled', 'twoFactorEnabled', 'welcomeContent', 'receipt'));
+        return view('settings.general', compact('registrationEnabled', 'twoFactorEnabled', 'welcomeContent', 'timezone', 'timezones', 'receipt'));
     }
 
     public function updateGeneral(Request $request)
@@ -122,6 +125,7 @@ class SettingsController extends Controller
         GeneralSetting::set('registration_enabled', $request->boolean('registration_enabled') ? '1' : '0');
         GeneralSetting::set('2fa_enabled', $request->boolean('2fa_enabled') ? '1' : '0');
         GeneralSetting::set('welcome_content', $request->input('welcome_content', ''));
+        GeneralSetting::set('timezone', $request->input('timezone', 'America/Havana'));
 
         $validated = $request->validate([
             'company_name' => 'nullable|string|max:255',
@@ -129,6 +133,7 @@ class SettingsController extends Controller
             'address' => 'nullable|string|max:500',
             'phone' => 'nullable|string|max:50',
             'footer_text' => 'nullable|string|max:500',
+            'timezone' => 'nullable|string|timezone',
         ]);
 
         if ($request->hasFile('logo')) {

@@ -18,9 +18,13 @@
         "ext-tokenizer": "*",
         "ext-xml": "*",
         "ext-zip": "*",
+        "barryvdh/laravel-dompdf": "^3.1",
         "laravel/framework": "^13.8",
+        "laravel/reverb": "^1.10",
         "laravel/tinker": "^3.0",
+        "livewire/livewire": "*",
         "openspout/openspout": "^5.3",
+        "predis/predis": "*",
         "spatie/laravel-permission": "^8.0"
     },
     "require-dev": {

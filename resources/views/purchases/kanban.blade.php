@@ -1,11 +1,11 @@
 <x-app-layout>
     <x-slot name="header">{{ __('Kanban - Compras') }}</x-slot>
     <x-content-wrapper>
-        <div class="mb-4 flex items-center justify-between">
-            <form method="GET" action="{{ route('purchases.kanban') }}" class="flex items-center gap-2">
-                <x-text-input type="text" name="search" :value="request('search')" placeholder="{{ __('Buscar factura...') }}" class="text-sm" />
-                <x-primary-button class="text-xs">{{ __('Filtrar') }}</x-primary-button>
-                <a href="{{ route('purchases.kanban') }}" class="inline-flex items-center px-3 py-1.5 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md text-xs font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600">{{ __('Limpiar') }}</a>
+        <div class="mb-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
+            <form method="GET" action="{{ route('purchases.kanban') }}" class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
+                <x-text-input type="text" name="search" :value="request('search')" placeholder="{{ __('Buscar factura...') }}" class="text-sm w-full sm:w-auto" />
+                <x-primary-button class="text-xs w-full sm:w-auto justify-center">{{ __('Filtrar') }}</x-primary-button>
+                <a href="{{ route('purchases.kanban') }}" class="w-full sm:w-auto inline-flex items-center justify-center px-3 py-1.5 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md text-xs font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600">{{ __('Limpiar') }}</a>
             </form>
             <a href="{{ route('purchases.index') }}" class="inline-flex items-center px-3 py-1.5 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md text-xs font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600">
                 <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M3 14h18m-9-4v8m-7 0h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>

@@ -156,11 +156,11 @@
 
                             <input type="hidden" name="items" id="itemsInput" value="[]">
 
-                            <div class="flex justify-end space-x-3">
-                                <button type="button" id="clearCart" class="inline-flex items-center px-4 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md font-semibold text-xs text-gray-700 dark:text-gray-300 uppercase tracking-widest shadow-sm hover:bg-gray-50 dark:hover:bg-gray-700">
+                            <div class="flex flex-col-reverse sm:flex-row justify-end gap-2 sm:space-x-3 sm:gap-0">
+                                <button type="button" id="clearCart" class="w-full sm:w-auto justify-center inline-flex items-center px-4 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md font-semibold text-xs text-gray-700 dark:text-gray-300 uppercase tracking-widest shadow-sm hover:bg-gray-50 dark:hover:bg-gray-700">
                                     {{ __('Limpiar') }}
                                 </button>
-                                <x-primary-button id="submitSale">{{ __('Completar Venta') }}</x-primary-button>
+                                <x-primary-button id="submitSale" class="w-full sm:w-auto justify-center">{{ __('Completar Venta') }}</x-primary-button>
                             </div>
                         </div>
                     </div>

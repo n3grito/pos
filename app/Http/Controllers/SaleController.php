@@ -11,6 +11,8 @@ use App\Models\Product;
 use App\Models\Sale;
 use App\Models\SaleDetail;
 use App\Models\Service;
+use App\Services\LoyaltyService;
+use App\Services\PromotionService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
@@ -321,11 +323,45 @@ class SaleController extends Controller
                     }
                 }
 
+                $totalAmount = $subtotal + $totalTax;
+
+                $promotionDiscount = 0;
+                $promotionId = null;
+                $pointsDiscount = 0;
+                $pointsRedeemed = 0;
+
+                if ($request->filled('client_id') && $request->client_id) {
+                    $promotionService = app(PromotionService::class);
+                    $cartItems = [];
+                    foreach ($request->details as $item) {
+                        if (!isset($item['service_id'])) {
+                            $cartItems[] = ['product_id' => $item['product_id'], 'quantity' => $item['quantity'] ?? 1];
+                        }
+                    }
+                    $best = $promotionService->findBestPromotion($totalAmount, $cartItems, (int) $request->client_id);
+                    if ($best) {
+                        $promotionDiscount = $best->calculateDiscount($totalAmount);
+                        $promotionId = $best->id;
+                    }
+
+                    if ($request->filled('points_to_redeem') && $request->points_to_redeem > 0) {
+                        $client = Client::find($request->client_id);
+                        if ($client) {
+                            $pts = min((int) $request->points_to_redeem, $client->points);
+                            if ($pts > 0) {
+                                $pointsDiscount = (new LoyaltyService())->redeemPoints($client, $pts, 'sale');
+                                $pointsRedeemed = $pts;
+                            }
+                        }
+                    }
+                }
+
+                $finalTotal = round(max(0, $totalAmount - $promotionDiscount - $pointsDiscount), 2);
+
                 // If payment is cash, validate amount
                 if ($request->payment_method === 'cash' && $request->filled('amount_paid')) {
                     $amountPaid = (float) $request->amount_paid;
-                    $totalAmount = $subtotal + $totalTax;
-                    $change = round($amountPaid - $totalAmount, 2);
+                    $change = round($amountPaid - $finalTotal, 2);
                     if ($change < 0) {
                         throw ValidationException::withMessages([
                             'amount_paid' => __('El monto recibido es menor que el total de la venta. Faltan $') . number_format(abs($change), 2),
@@ -333,10 +369,30 @@ class SaleController extends Controller
                     }
                 }
 
+                $pointsEarned = 0;
+                if ($request->filled('client_id') && $request->client_id) {
+                    $client = Client::find($request->client_id);
+                    if ($client) {
+                        $pointsEarned = (new LoyaltyService())->earnPoints(
+                            $client,
+                            $finalTotal,
+                            'sale',
+                            $sale->id,
+                            'Venta #' . $sale->invoice_number
+                        );
+                    }
+                }
+
                 $sale->update([
                     'subtotal' => $subtotal,
                     'tax' => $totalTax,
-                    'total' => $subtotal + $totalTax,
+                    'total' => $finalTotal,
+                    'discount_type' => $promotionDiscount > 0 ? 'promotion' : ($pointsDiscount > 0 ? 'points' : null),
+                    'discount_value' => $promotionDiscount + $pointsDiscount,
+                    'discount_amount' => $promotionDiscount + $pointsDiscount,
+                    'promotion_id' => $promotionId,
+                    'points_earned' => $pointsEarned,
+                    'points_redeemed' => $pointsRedeemed,
                     'amount_paid' => $amountPaid,
                     'change' => $change,
                 ]);
@@ -397,9 +453,7 @@ class SaleController extends Controller
 
                 foreach ($sale->details as $detail) {
                     if ($detail->service) {
-                        // Restore stock of component products in inventory
-                        $service = $detail->service->load('products');
-                        foreach ($service->products as $component) {
+                        foreach ($detail->service->products as $component) {
                             $componentQty = $component->pivot->quantity * $detail->quantity;
                             Product::where('id', $component->id)->increment('stock', $componentQty);
 

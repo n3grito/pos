@@ -1,46 +1,149 @@
-const syncQueue = [];
+import { db } from './db';
 
-function loadQueue() {
-    try {
-        const data = localStorage.getItem('pwa_sync_queue');
-        if (data) syncQueue.push(...JSON.parse(data));
-    } catch {}
-}
+class PwaManager {
+    constructor() {
+        this.deferredPrompt = null;
+        this.isOnline = navigator.onLine;
+        this.syncing = false;
+        this._bindEvents();
+    }
 
-function saveQueue() {
-    localStorage.setItem('pwa_sync_queue', JSON.stringify(syncQueue));
-}
+    _bindEvents() {
+        window.addEventListener('online', () => {
+            this.isOnline = true;
+            this._updateOnlineStatus();
+            this.processQueue();
+        });
 
-export function addToQueue(action, payload) {
-    syncQueue.push({ action, payload, timestamp: Date.now() });
-    saveQueue();
-}
+        window.addEventListener('offline', () => {
+            this.isOnline = false;
+            this._updateOnlineStatus();
+        });
 
-export async function processQueue() {
-    if (!navigator.onLine || syncQueue.length === 0) return;
+        window.addEventListener('beforeinstallprompt', event => {
+            this.deferredPrompt = event;
+        });
 
-    while (syncQueue.length > 0) {
-        const item = syncQueue[0];
-        try {
-            const csrf = document.querySelector('meta[name="csrf-token"]')?.content;
-            const resp = await fetch('/api/sync', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': csrf },
-                body: JSON.stringify(item),
-            });
-            if (resp.ok) {
-                syncQueue.shift();
-                saveQueue();
-            } else {
-                break;
+        window.addEventListener('appinstalled', () => {
+            this.deferredPrompt = null;
+        });
+
+        navigator.serviceWorker.addEventListener('message', event => {
+            if (event.data && event.data.type === 'PROCESS_SYNC_QUEUE') {
+                this.processQueue();
             }
+        });
+    }
+
+    _updateOnlineStatus() {
+        document.documentElement.classList.toggle('offline', !this.isOnline);
+
+        const indicators = document.querySelectorAll('[data-online-indicator]');
+        indicators.forEach(el => {
+            el.classList.toggle('hidden', this.isOnline);
+            el.classList.toggle('flex', !this.isOnline);
+        });
+
+        const onlineIndicators = document.querySelectorAll('[data-offline-indicator]');
+        onlineIndicators.forEach(el => {
+            el.classList.toggle('hidden', !this.isOnline);
+            el.classList.toggle('flex', this.isOnline);
+        });
+    }
+
+    async queueSale(saleData) {
+        const sale = {
+            items: saleData.cart.map(item => ({
+                product_id: item.product_id,
+                quantity: item.quantity,
+                price: item.price,
+            })),
+            payment_method: saleData.paymentMethod || 'cash',
+            amount_paid: saleData.amountPaid || 0,
+            client_name: saleData.clientName || '',
+            client_nit: saleData.clientNit || '',
+            payment_reference: saleData.paymentReference || '',
+            client_id: saleData.clientId || null,
+        };
+
+        await db.queueSale(sale);
+
+        if (this.isOnline) {
+            await this.processQueue();
+        } else if ('serviceWorker' in navigator && 'sync' in ServiceWorkerRegistration.prototype) {
+            try {
+                const registration = await navigator.serviceWorker.ready;
+                await registration.sync.register('sync-sales');
+            } catch (e) {
+                console.warn('Background Sync not available, will sync on next online event');
+            }
+        }
+    }
+
+    async processQueue() {
+        if (!this.isOnline || this.syncing) return;
+        this.syncing = true;
+
+        try {
+            const queuedSales = await db.getQueuedSales();
+
+            for (const sale of queuedSales) {
+                try {
+                    const response = await fetch('/sales', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || '',
+                        },
+                        body: JSON.stringify(sale),
+                    });
+
+                    if (response.ok) {
+                        await db.removeQueuedSale(sale.id);
+                    } else {
+                        const text = await response.text();
+                        console.warn('Sync failed for sale', sale.id, response.status, text);
+                        break;
+                    }
+                } catch (e) {
+                    console.warn('Sync network error, will retry later', e);
+                    break;
+                }
+            }
+        } catch (e) {
+            console.error('Error processing sync queue:', e);
+        } finally {
+            this.syncing = false;
+        }
+    }
+
+    async getQueuedCount() {
+        try {
+            const sales = await db.getQueuedSales();
+            return sales.length;
         } catch {
-            break;
+            return 0;
+        }
+    }
+
+    async showInstallPrompt() {
+        if (!this.deferredPrompt) return false;
+        this.deferredPrompt.prompt();
+        const result = await this.deferredPrompt.userChoice;
+        this.deferredPrompt = null;
+        return result.outcome === 'accepted';
+    }
+
+    async cacheData(products, customers) {
+        if (!this.isOnline) return;
+        try {
+            if (products && products.length) await db.cacheProducts(products);
+            if (customers && customers.length) await db.cacheCustomers(customers);
+        } catch (e) {
+            console.warn('Failed to cache data:', e);
         }
     }
 }
 
-if (typeof window !== 'undefined') {
-    loadQueue();
-    window.addEventListener('online', processQueue);
-}
+export const pwa = new PwaManager();

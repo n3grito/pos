@@ -2,10 +2,14 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Product extends Model
 {
+    use HasFactory;
+
+
     protected static function boot(): void
     {
         parent::boot();
@@ -82,6 +86,11 @@ class Product extends Model
     public function priceLists()
     {
         return $this->belongsToMany(PriceList::class, 'product_prices')->withPivot('price');
+    }
+
+    public function promotions()
+    {
+        return $this->belongsToMany(Promotion::class, 'promotion_product');
     }
 
     public function getPriceForList(?PriceList $priceList): float

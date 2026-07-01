@@ -4,11 +4,19 @@
     </x-slot>
 
     <x-content-wrapper>
-        <div class="mb-6">
+        <div class="mb-6 flex items-center justify-between flex-wrap gap-4">
             <a href="{{ route('manuals.index') }}" class="inline-flex items-center text-sm text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 transition-colors">
                 <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
                 {{ __('Volver a manuales') }}
             </a>
+            @if ($isCurrentUserRole)
+                <span class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-green-100 dark:bg-green-900/40 text-green-700 dark:text-green-300 text-sm font-medium rounded-full">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                    </svg>
+                    {{ __('Tu rol actual') }}
+                </span>
+            @endif
         </div>
 
         <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl overflow-hidden">
@@ -21,24 +29,27 @@
                     </div>
                     <div>
                         <h2 class="text-xl font-bold text-gray-900 dark:text-gray-100">{{ $role->name }}</h2>
-                        <p class="text-sm text-gray-500 dark:text-gray-400">{{ __('Manual de uso con descripción de funcionalidades según permisos asignados.') }}</p>
+                        <p class="text-sm text-gray-500 dark:text-gray-400">{{ __('Descripción de funcionalidades y permisos asignados a este rol.') }}</p>
                     </div>
                 </div>
             </div>
 
             <div class="p-6">
                 @if ($grouped)
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        @foreach ($grouped as $module => $actions)
-                            <div class="bg-gray-50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-700 rounded-lg p-4">
-                                <div class="flex items-center gap-2 mb-3">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        @foreach ($grouped as $moduleKey => $moduleData)
+                            <div class="bg-gray-50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-700 rounded-lg p-5 hover:shadow-md transition-shadow">
+                                <div class="flex items-center gap-2 mb-2">
                                     <svg class="w-5 h-5 text-blue-500 dark:text-blue-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
                                     </svg>
-                                    <h3 class="font-semibold text-gray-800 dark:text-gray-200">{{ $module }}</h3>
+                                    <h3 class="font-semibold text-gray-800 dark:text-gray-200">{{ $moduleData['name'] }}</h3>
                                 </div>
-                                <ul class="space-y-1.5">
-                                    @foreach ($actions as $action)
+                                @if ($moduleData['description'])
+                                    <p class="text-xs text-gray-500 dark:text-gray-400 mb-3 pl-7">{{ $moduleData['description'] }}</p>
+                                @endif
+                                <ul class="space-y-1.5 pl-7">
+                                    @foreach ($moduleData['actions'] as $action)
                                         <li class="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
                                             <svg class="w-4 h-4 text-green-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
@@ -58,7 +69,7 @@
                             </svg>
                             <div class="text-sm text-blue-800 dark:text-blue-300">
                                 <strong>{{ __('Nota:') }}</strong>
-                                {{ __('Las funcionalidades que ves aquí están determinadas por los permisos asignados a tu rol. Si necesitas acceso adicional, contacta a un administrador.') }}
+                                {{ __('Las funcionalidades que ves aquí están determinadas por los permisos asignados a este rol. Si necesitas acceso adicional, contacta a un administrador.') }}
                             </div>
                         </div>
                     </div>

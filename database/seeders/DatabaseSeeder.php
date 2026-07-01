@@ -16,6 +16,7 @@ class DatabaseSeeder extends Seeder
         $this->call(PermissionSeeder::class);
         $this->call(UnitSeeder::class);
         $this->call(PriceListSeeder::class);
+        $this->call(CustomerGroupSeeder::class);
 
         $admin = User::firstOrCreate(
             ['email' => 'admin@pos.com'],

@@ -1,13 +1,25 @@
-import Alpine from 'alpinejs';
 import { initDashboardCharts } from './dashboard-charts';
+import './keyboard-shortcuts';
+import echo from './echo';
+import { pwa } from './pwa';
 
-window.Alpine = Alpine;
+function showToast(message, type = 'success', persistent = false) {
+    const tm = document.querySelector('[x-data="toastManager()"]');
+    if (tm && tm.__x) {
+        tm.__x.$data.addToast(message, type, persistent);
+    }
+}
 
-Alpine.data('toastManager', () => ({
+window.showToast = showToast;
+
+window.Alpine.data('toastManager', () => ({
     toasts: [],
     init() {
         this.loadFromSession();
         document.addEventListener('livewire:navigated', () => this.loadFromSession());
+        window.addEventListener('notify', e => {
+            this.addToast(e.detail.message, e.detail.type || 'success', false);
+        });
     },
     loadFromSession() {
         const el = this.$el;
@@ -25,10 +37,6 @@ Alpine.data('toastManager', () => ({
             setTimeout(() => this.removeToast(this.toasts.indexOf(toast)), 5000);
         }
     },
-    showAlert(message, severity) {
-        const type = severity === 'critical' ? 'error' : severity === 'warning' ? 'warning' : 'info';
-        this.addToast(message, type, false);
-    },
     removeToast(index) {
         if (this.toasts[index]) {
             this.toasts[index].visible = false;
@@ -37,13 +45,51 @@ Alpine.data('toastManager', () => ({
     },
 }));
 
-Alpine.start();
+window.Alpine.data('offlineIndicator', () => ({
+    isOnline: navigator.onLine,
+    queuedCount: 0,
+    async init() {
+        this.updateStatus();
+        window.addEventListener('online', () => { this.isOnline = true; this.updateCount(); });
+        window.addEventListener('offline', () => { this.isOnline = false; });
+        setInterval(() => this.updateCount(), 30000);
+        document.addEventListener('livewire:navigated', () => this.updateCount());
+    },
+    updateStatus() {
+        this.isOnline = navigator.onLine;
+    },
+    async updateCount() {
+        this.queuedCount = await pwa.getQueuedCount();
+    },
+}));
+
+window.Alpine.data('installPrompt', () => ({
+    show: false,
+    async init() {
+        await this.check();
+        window.addEventListener('beforeinstallprompt', () => this.check());
+    },
+    async check() {
+        const prompt = window.pwa?.deferredPrompt;
+        this.show = !!prompt && !window.matchMedia('(display-mode: standalone)').matches;
+    },
+    async install() {
+        if (window.pwa) {
+            const accepted = await window.pwa.showInstallPrompt();
+            if (accepted) this.show = false;
+        }
+    },
+}));
+
+window.pwa = pwa;
+
+pwa._updateOnlineStatus();
 
 document.addEventListener('DOMContentLoaded', () => {
     initDashboardCharts();
 
     if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('/sw.js');
+        navigator.serviceWorker.register('/sw.js').catch(() => {});
     }
 
     const pollerData = document.getElementById('activityPollerData');
@@ -59,19 +105,26 @@ document.addEventListener('DOMContentLoaded', () => {
                     if (data.count > 0) {
                         badge.classList.remove('hidden');
                         data.alerts.forEach(alert => {
-                            const tm = document.querySelector('[x-data="toastManager()"]');
-                            if (tm && tm.__x) {
-                                tm.__x.$data.addToast(
-                                    alert.description,
-                                    alert.severity === 'critical' ? 'error' : 'warning',
-                                    false
-                                );
-                            }
+                            showToast(
+                                alert.description,
+                                alert.severity === 'critical' ? 'error' : 'warning'
+                            );
                         });
                         setTimeout(() => badge.classList.add('hidden'), 30000);
                     }
                 })
                 .catch(() => {});
         }, 15000);
+    }
+
+    const userId = document.querySelector('meta[name="user-id"]')?.content;
+    if (userId && echo) {
+        echo.private('user.' + userId)
+            .listen('.SaleCompleted', e => showToast(e.message, 'success'));
+
+        echo.private('admin.notifications')
+            .listen('.LowStockAlert', e =>
+                showToast(e.message, e.severity === 'critical' ? 'error' : 'warning')
+            );
     }
 });

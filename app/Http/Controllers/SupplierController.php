@@ -18,8 +18,7 @@ class SupplierController extends Controller
 
     public function index()
     {
-        $suppliers = Supplier::paginate(10);
-
+        $suppliers = Supplier::latest()->paginate(10);
         return view('suppliers.index', compact('suppliers'));
     }
 
@@ -32,11 +31,18 @@ class SupplierController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
+            'client_type' => 'required|string|in:' . implode(',', array_keys(Supplier::TYPES)),
+            'tax_id' => 'required|string|max:30|unique:suppliers,tax_id',
             'email' => 'nullable|email|max:255',
-            'phone' => 'nullable|string|max:20',
+            'phone' => 'nullable|string|max:30',
             'address' => 'nullable|string|max:255',
             'contact_person' => 'nullable|string|max:255',
+            'photo' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
         ]);
+
+        if ($request->hasFile('photo')) {
+            $validated['photo'] = $request->file('photo')->store('suppliers', 'public');
+        }
 
         Supplier::create($validated);
 
@@ -44,7 +50,7 @@ class SupplierController extends Controller
             return response()->json(['message' => 'Supplier created successfully.'], 201);
         }
 
-        toast('Supplier created successfully.', 'success');
+        toast('Proveedor creado exitosamente.', 'success');
         return redirect()->route('suppliers.index');
     }
 
@@ -62,11 +68,24 @@ class SupplierController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
+            'client_type' => 'required|string|in:' . implode(',', array_keys(Supplier::TYPES)),
+            'tax_id' => 'required|string|max:30|unique:suppliers,tax_id,' . $supplier->id,
             'email' => 'nullable|email|max:255',
-            'phone' => 'nullable|string|max:20',
+            'phone' => 'nullable|string|max:30',
             'address' => 'nullable|string|max:255',
             'contact_person' => 'nullable|string|max:255',
+            'photo' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
         ]);
+
+        if ($request->hasFile('photo')) {
+            if ($supplier->photo) {
+                \Illuminate\Support\Facades\Storage::disk('public')->delete($supplier->photo);
+            }
+            $validated['photo'] = $request->file('photo')->store('suppliers', 'public');
+        } elseif ($request->boolean('remove_photo') && $supplier->photo) {
+            \Illuminate\Support\Facades\Storage::disk('public')->delete($supplier->photo);
+            $validated['photo'] = null;
+        }
 
         $supplier->update($validated);
 
@@ -74,19 +93,22 @@ class SupplierController extends Controller
             return response()->json(['message' => 'Supplier updated successfully.']);
         }
 
-        toast('Supplier updated successfully.', 'success');
+        toast('Proveedor actualizado exitosamente.', 'success');
         return redirect()->route('suppliers.index');
     }
 
     public function destroy(Request $request, Supplier $supplier)
     {
+        if ($supplier->photo) {
+            \Illuminate\Support\Facades\Storage::disk('public')->delete($supplier->photo);
+        }
         $supplier->delete();
 
         if ($request->wantsJson()) {
             return response()->json(['message' => 'Supplier deleted successfully.']);
         }
 
-        toast('Supplier deleted successfully.', 'success');
+        toast('Proveedor eliminado exitosamente.', 'success');
         return redirect()->route('suppliers.index');
     }
 }

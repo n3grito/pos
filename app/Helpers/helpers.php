@@ -34,12 +34,3 @@ if (!function_exists('toast')) {
         session()->flash('toasts', $toasts);
     }
 }
-
-if (!function_exists('toast')) {
-    function toast(string $message, string $type = 'success', bool $persistent = false): void
-    {
-        $toasts = session('toasts', []);
-        $toasts[] = ['message' => $message, 'type' => $type, 'persistent' => $persistent];
-        session()->flash('toasts', $toasts);
-    }
-}
